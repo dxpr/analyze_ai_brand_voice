@@ -15,9 +15,11 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\analyze\Helper\AnalyzeHelperInterface;
 
 /**
- * A brand voice analyzer that uses AI to check content against brand guidelines.
+ * Brand voice analyzer that uses AI to check content against brand guidelines.
  *
  * @Analyze(
  *   id = "brand_voice_analyzer",
@@ -32,14 +34,14 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
    *
    * @var \Drupal\ai\AiProviderPluginManager
    */
-  protected $aiProvider;
+  protected AiProviderPluginManager $aiProvider;
 
   /**
    * The messenger service.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  protected $messenger;
+  protected MessengerInterface $messenger;
 
   /**
    * The prompt JSON decoder service.
@@ -50,13 +52,36 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
 
   /**
    * Creates the plugin.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\analyze\Helper\AnalyzeHelperInterface $helper
+   *   The analyze helper service.
+   * @param \Drupal\Core\Session\AccountInterface $currentUser
+   *   The current user.
+   * @param \Drupal\ai\AiProviderPluginManager $aiProvider
+   *   The AI provider manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
+   *   The language manager.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
+   * @param \Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface $promptJsonDecoder
+   *   The prompt JSON decoder service.
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    $helper,
-    $currentUser,
+    string $plugin_id,
+    mixed $plugin_definition,
+    AnalyzeHelperInterface $helper,
+    AccountInterface $currentUser,
     AiProviderPluginManager $aiProvider,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
@@ -73,7 +98,7 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+  public static function create(ContainerInterface $container, array $configuration, string $plugin_id, mixed $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,
@@ -95,14 +120,17 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
    * @param string $message
    *   The status message to display.
    *
-   * @return array
+   * @return array<string, mixed>
    *   The render array for the status table.
    */
   private function createStatusTable(string $message): array {
     // If this is the AI provider message and user has permission, append the settings link.
     if ($message === 'No chat AI provider is configured for brand voice analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
-      $message = $this->t('No chat AI provider is configured for brand voice analysis. @link', ['@link' => $link->toString()]);
+      $message = $this->t(
+        'No chat AI provider is configured for brand voice analysis. @link',
+        ['@link' => $link->toString()]
+      );
     }
 
     return [
@@ -149,6 +177,12 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
 
   /**
    * Helper to get the rendered entity content.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to render.
+   *
+   * @return string
+   *   The rendered content as plain text.
    */
   private function getHtml(EntityInterface $entity): string {
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
@@ -169,6 +203,12 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
 
   /**
    * Analyze the brand voice of entity content.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to analyze.
+   *
+   * @return float|null
+   *   The brand voice score between -1.0 and 1.0, or NULL if analysis failed.
    */
   protected function analyzeBrandVoice(EntityInterface $entity): ?float {
     try {
@@ -261,13 +301,18 @@ EOT;
    * {@inheritdoc}
    */
   public function extraSummaryLinks(EntityInterface $entity): array {
-    return [];
+    /** @var array<int, mixed> $links */
+    $links = [];
+    return $links;
   }
 
   /**
+   * Gets the AI provider plugin.
    *
+   * @return \Drupal\ai\AiProviderPluginManager|null
+   *   The AI provider plugin or NULL if not configured.
    */
-  private function getAiProvider() {
+  private function getAiProvider(): ?AiProviderPluginManager {
     if (!$this->aiProvider->hasProvidersForOperationType('chat', TRUE)) {
       return NULL;
     }
@@ -284,9 +329,12 @@ EOT;
   }
 
   /**
+   * Gets the default model configuration.
    *
+   * @return array<string, string>|null
+   *   The default model configuration or NULL if not available.
    */
-  private function getDefaultModel() {
+  private function getDefaultModel(): ?array {
     $defaults = $this->aiProvider->getDefaultProviderForOperationType('chat');
     if (empty($defaults['provider_id']) || empty($defaults['model_id'])) {
       return NULL;

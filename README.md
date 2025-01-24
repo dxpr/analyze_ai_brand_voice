@@ -8,7 +8,9 @@
 
 ## INTRODUCTION
 
-The Analyze Brand Voice module provides AI-powered brand voice consistency analysis for Drupal content, measuring how well content aligns with your organization's brand voice guidelines.
+The Analyze Brand Voice module provides AI-powered brand voice consistency
+analysis for Drupal content, measuring how well content aligns with your
+organization's brand voice guidelines.
 
 The primary use case for this module is to:
 
@@ -94,7 +96,8 @@ requests or merging changes into the main branch.
 
 ### Basic Setup
 - Configure AI provider settings at `/admin/config/analyze/ai`
-- Enable/disable the analyzer per content type at `/admin/config/system/analyze-settings`
+- Enable/disable the analyzer per content type at
+`/admin/config/system/analyze-settings`
 
 ### Content Type Configuration
 You can enable/disable brand voice analysis per content type:
@@ -118,7 +121,8 @@ The module evaluates content against predefined brand voice guidelines:
 - Knowledgeable without being condescending
 - Inclusive and welcoming
 
-The analysis provides a score from -1.0 (completely off-brand) to +1.0 (perfectly aligned with brand voice).
+The analysis provides a score from -1.0 (completely off-brand) to +1.0
+(perfectly aligned with brand voice).
 
 ### Display
 - Results are shown as a gauge with clear progression
