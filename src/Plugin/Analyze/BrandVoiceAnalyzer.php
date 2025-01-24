@@ -17,6 +17,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\analyze\HelperInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ai\Plugin\ProviderProxy;
 
 /**
@@ -29,6 +30,8 @@ use Drupal\ai\Plugin\ProviderProxy;
  * )
  */
 final class BrandVoiceAnalyzer extends AnalyzePluginBase {
+
+  use StringTranslationTrait;
 
   /**
    * The AI provider manager.
@@ -141,8 +144,9 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The render array for the status table.
    */
   private function createStatusTable(string $message): array {
-    // If this is the AI provider message and user has permission, append the settings link.
-    if ($message === 'No chat AI provider is configured for brand voice analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
+    // If this is the AI provider message and user has permission, append link.
+    if ($message === 'No chat AI provider is configured for brand voice analysis.'
+      && $this->currentUser->hasPermission('administer analyze settings')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
       $message = $this->t(
         'No chat AI provider is configured for brand voice analysis. @link',
@@ -179,7 +183,8 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
       return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
     }
 
-    return [
+    /** @var array<string, mixed> $render */
+    $render = [
       '#theme' => 'analyze_gauge',
       '#caption' => $this->t('Brand Voice Alignment'),
       '#range_min_label' => $this->t('Off-brand'),
@@ -190,6 +195,8 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
       '#value' => ($score + 1) / 2,
       '#display_value' => sprintf('%+.1f', $score),
     ];
+
+    return $render;
   }
 
   /**
@@ -318,7 +325,7 @@ EOT;
    * {@inheritdoc}
    */
   public function extraSummaryLinks(EntityInterface $entity): array {
-    /** @var array<int, mixed> $links */
+    /** @var array<int, never> $links */
     $links = [];
     return $links;
   }
@@ -339,6 +346,7 @@ EOT;
       return NULL;
     }
 
+    /** @var \Drupal\ai\Plugin\ProviderProxy $ai_provider */
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
     $ai_provider->setConfiguration(['temperature' => 0.2]);
 
@@ -352,6 +360,7 @@ EOT;
    *   The default model configuration or NULL if not available.
    */
   private function getDefaultModel(): ?array {
+    /** @var array<string, string>|null $defaults */
     $defaults = $this->aiProvider->getDefaultProviderForOperationType('chat');
     if (empty($defaults['provider_id']) || empty($defaults['model_id'])) {
       return NULL;
