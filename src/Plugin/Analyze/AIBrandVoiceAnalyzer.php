@@ -19,6 +19,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\analyze\HelperInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ai\Plugin\ProviderProxy;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Brand voice analyzer that uses AI to check content against brand guidelines.
@@ -69,6 +70,13 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   protected HelperInterface $helper;
 
   /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected ModuleHandlerInterface $moduleHandler;
+
+  /**
    * Creates the plugin.
    *
    * @param array<string, mixed> $configuration
@@ -93,6 +101,8 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The messenger service.
    * @param \Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface $promptJsonDecoder
    *   The prompt JSON decoder service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler service.
    */
   public function __construct(
     array $configuration,
@@ -106,6 +116,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     protected LanguageManagerInterface $languageManager,
     MessengerInterface $messenger,
     PromptJsonDecoderInterface $promptJsonDecoder,
+    ModuleHandlerInterface $moduleHandler,
   ) {
     $this->helper = $helper;
     $this->currentUser = $currentUser;
@@ -113,6 +124,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     $this->aiProvider = $aiProvider;
     $this->messenger = $messenger;
     $this->promptJsonDecoder = $promptJsonDecoder;
+    $this->moduleHandler = $moduleHandler;
   }
 
   /**
@@ -131,6 +143,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
       $container->get('language_manager'),
       $container->get('messenger'),
       $container->get('ai.prompt_json_decode'),
+      $container->get('module_handler'),
     );
   }
 
@@ -226,6 +239,22 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   }
 
   /**
+   * Gets the brand voice guidelines from all contributing modules.
+   *
+   * @return string
+   *   The combined brand voice guidelines.
+   */
+  private function getBrandVoice(): string {
+    // Set default brand voice.
+    $brand_voice = 'Clear, approachable, professional, respectful';
+
+    // Allow other modules to alter the brand voice.
+    $this->moduleHandler->alter('ai_brand_voice', $brand_voice);
+
+    return $brand_voice;
+  }
+
+  /**
    * Analyze the ai brand voice of entity content.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
@@ -248,22 +277,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
         return NULL;
       }
 
-      // Example ai brand voice guidelines.
-      $brand_voice = <<<EOT
-Our ai brand voice is:
-- Friendly but professional
-- Clear and concise
-- Empowering and solution-focused
-- Knowledgeable without being condescending
-- Inclusive and welcoming
-
-We avoid:
-- Overly technical jargon
-- Passive voice
-- Negative or critical tone
-- Informal slang
-- Excessive exclamation marks
-EOT;
+      $brand_voice = $this->getBrandVoice();
 
       $prompt = <<<EOT
 <task>Analyze how well the following text aligns with our ai brand voice guidelines.</task>
