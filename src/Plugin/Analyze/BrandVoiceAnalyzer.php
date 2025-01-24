@@ -15,8 +15,9 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\analyze\Helper\AnalyzeHelperInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\analyze\HelperInterface;
+use Drupal\ai\Plugin\ProviderProxy;
 
 /**
  * Brand voice analyzer that uses AI to check content against brand guidelines.
@@ -51,6 +52,20 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
   protected PromptJsonDecoderInterface $promptJsonDecoder;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
+   * The analyze helper.
+   *
+   * @var \Drupal\analyze\HelperInterface
+   */
+  protected HelperInterface $helper;
+
+  /**
    * Creates the plugin.
    *
    * @param array<string, mixed> $configuration
@@ -59,9 +74,9 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\analyze\Helper\AnalyzeHelperInterface $helper
+   * @param \Drupal\analyze\HelperInterface $helper
    *   The analyze helper service.
-   * @param \Drupal\Core\Session\AccountInterface $currentUser
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
    * @param \Drupal\ai\AiProviderPluginManager $aiProvider
    *   The AI provider manager.
@@ -80,8 +95,8 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    AnalyzeHelperInterface $helper,
-    AccountInterface $currentUser,
+    HelperInterface $helper,
+    AccountProxyInterface $currentUser,
     AiProviderPluginManager $aiProvider,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
@@ -89,6 +104,8 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
     MessengerInterface $messenger,
     PromptJsonDecoderInterface $promptJsonDecoder,
   ) {
+    $this->helper = $helper;
+    $this->currentUser = $currentUser;
     parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
     $this->aiProvider = $aiProvider;
     $this->messenger = $messenger;
@@ -98,7 +115,7 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, string $plugin_id, mixed $plugin_definition): static {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,
@@ -309,10 +326,10 @@ EOT;
   /**
    * Gets the AI provider plugin.
    *
-   * @return \Drupal\ai\AiProviderPluginManager|null
+   * @return \Drupal\ai\Plugin\ProviderProxy|null
    *   The AI provider plugin or NULL if not configured.
    */
-  private function getAiProvider(): ?AiProviderPluginManager {
+  private function getAiProvider(): ?ProviderProxy {
     if (!$this->aiProvider->hasProvidersForOperationType('chat', TRUE)) {
       return NULL;
     }
