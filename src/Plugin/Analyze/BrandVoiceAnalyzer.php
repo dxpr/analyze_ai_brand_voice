@@ -90,25 +90,48 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
   }
 
   /**
+   * Creates a fallback status table.
+   *
+   * @param string $message
+   *   The status message to display.
+   *
+   * @return array
+   *   The render array for the status table.
+   */
+  private function createStatusTable(string $message): array {
+    // If this is the AI provider message and user has permission, append the settings link
+    if ($message === 'No chat AI provider is configured for brand voice analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
+      $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
+      $message = $this->t('No chat AI provider is configured for brand voice analysis. @link', ['@link' => $link->toString()]);
+    }
+
+    return [
+      '#theme' => 'analyze_table',
+      '#table_title' => 'Brand Voice Analysis',
+      '#rows' => [
+        [
+          'label' => 'Status',
+          'data' => $message,
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFullReportUrl(EntityInterface $entity): ?Url {
+    return NULL;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function renderSummary(EntityInterface $entity): array {
     $score = $this->analyzeBrandVoice($entity);
     
     if ($score === NULL) {
-      return [
-        '#theme' => 'analyze_table',
-        '#table_title' => 'Brand Voice Analysis',
-        '#rows' => [
-          [
-            'label' => 'Status',
-            'data' => $this->t('No chat AI provider is configured for brand voice analysis. Please configure one in the %ai_settings_link.', [
-              '%ai_settings_link' => Link::createFromRoute($this->t('AI settings'), 'ai.settings_form')
-                  ->toString(),
-            ]),
-          ],
-        ],
-      ];
+      return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
     }
     
     return [
@@ -122,44 +145,6 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
       '#value' => ($score + 1) / 2,
       '#display_value' => sprintf('%+.1f', $score),
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function renderFullReport(EntityInterface $entity): array {
-    $score = $this->analyzeBrandVoice($entity);
-    
-    if ($score === NULL) {
-      return [];
-    }
-
-    $build = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => ['analyze-brand-voice-report'],
-      ],
-    ];
-
-    $build['title'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'h2',
-      '#value' => $this->t('Brand Voice Analysis'),
-    ];
-    
-    $build['gauge'] = [
-      '#theme' => 'analyze_gauge',
-      '#caption' => $this->t('Brand Voice Alignment'),
-      '#range_min_label' => $this->t('Off-brand'),
-      '#range_mid_label' => $this->t('Neutral'),
-      '#range_max_label' => $this->t('On-brand'),
-      '#range_min' => -1,
-      '#range_max' => 1,
-      '#value' => ($score + 1) / 2,
-      '#display_value' => sprintf('%+.1f', $score),
-    ];
-
-    return $build;
   }
 
   /**
@@ -270,13 +255,6 @@ EOT;
    */
   public function access(EntityInterface $entity): bool {
     return $this->currentUser->hasPermission('access content');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFullReportUrl(EntityInterface $entity): ?Url {
-    return parent::getFullReportUrl($entity);
   }
 
   /**
