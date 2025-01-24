@@ -18,6 +18,7 @@ The primary use case for this module is to:
 - **Score** text content against ai brand voice guidelines:
   - Overall alignment with ai brand voice (-1 to 1)
 - **Guide** content creators with instant AI feedback
+- **Customize** brand voice guidelines through a simple hook
 
 Goals:
 
@@ -25,6 +26,7 @@ Goals:
 - A stable, maintainable API for AI-powered content evaluation
 - Integration with the Analyze framework for consistent reporting
 - Simple, zero-configuration setup with built-in ai brand voice guidelines
+- Flexible brand voice customization through Drupal's hook system
 
 ## REQUIREMENTS
 
@@ -32,6 +34,8 @@ This module requires the following modules:
 
 - Analyze (drupal/analyze)
 - AI (drupal/ai)
+- CKEditor AI Agent (drupal/ckeditor_ai_agent) - Provides default brand 
+  voice settings
 
 ## INSTALLATION
 
@@ -44,6 +48,17 @@ This module requires the following modules:
 
 3. Configure permissions for content analysis.
    (/admin/people/permissions#module-analyze_ai_brand_voice)
+
+### Brand Voice Customization
+The default brand voice guidelines can be customized using the `hook_ai_brand_voice_alter()` hook. Currently, the CKEditor AI Agent module (a required dependency) implements this hook to provide the default brand voice settings. We are open to pull requests to improve this.
+
+Example implementation in your custom module:
+```php
+function hook_ai_brand_voice_alter(string &$brand_voice) {
+  // Override the default brand voice guidelines
+  $brand_voice = 'Friendly, conversational, expert, inclusive';
+}
+```
 
 ### Docker Commands
 
