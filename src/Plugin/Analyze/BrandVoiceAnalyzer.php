@@ -99,7 +99,7 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The render array for the status table.
    */
   private function createStatusTable(string $message): array {
-    // If this is the AI provider message and user has permission, append the settings link
+    // If this is the AI provider message and user has permission, append the settings link.
     if ($message === 'No chat AI provider is configured for brand voice analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
       $message = $this->t('No chat AI provider is configured for brand voice analysis. @link', ['@link' => $link->toString()]);
@@ -129,11 +129,11 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
    */
   public function renderSummary(EntityInterface $entity): array {
     $score = $this->analyzeBrandVoice($entity);
-    
+
     if ($score === NULL) {
       return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
     }
-    
+
     return [
       '#theme' => 'analyze_gauge',
       '#caption' => $this->t('Brand Voice Alignment'),
@@ -154,16 +154,16 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
     $rendered = $this->renderer->render($view);
-    
+
     $content = is_object($rendered) && method_exists($rendered, '__toString')
       ? $rendered->__toString()
       : (string) $rendered;
-      
+
     $content = strip_tags($content);
     $content = str_replace('&nbsp;', ' ', $content);
     $content = preg_replace('/\s+/', ' ', $content);
     $content = trim($content);
-    
+
     return $content;
   }
 
@@ -184,7 +184,7 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
         return NULL;
       }
 
-      // Example brand voice guidelines
+      // Example brand voice guidelines.
       $brand_voice = <<<EOT
 Our brand voice is:
 - Friendly but professional
@@ -229,13 +229,13 @@ EOT;
 
       $messages = new ChatInput($chat_array);
       $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
-      
+
       $decoded = $this->promptJsonDecoder->decode($message);
-      
+
       if (!is_array($decoded) || !isset($decoded['score'])) {
         return NULL;
       }
-      
+
       return max(-1.0, min(1.0, (float) $decoded['score']));
     }
     catch (\Exception $e) {
@@ -264,6 +264,9 @@ EOT;
     return [];
   }
 
+  /**
+   *
+   */
   private function getAiProvider() {
     if (!$this->aiProvider->hasProvidersForOperationType('chat', TRUE)) {
       return NULL;
@@ -276,10 +279,13 @@ EOT;
 
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
     $ai_provider->setConfiguration(['temperature' => 0.2]);
-    
+
     return $ai_provider;
   }
 
+  /**
+   *
+   */
   private function getDefaultModel() {
     $defaults = $this->aiProvider->getDefaultProviderForOperationType('chat');
     if (empty($defaults['provider_id']) || empty($defaults['model_id'])) {
@@ -287,4 +293,5 @@ EOT;
     }
     return $defaults;
   }
-} 
+
+}
