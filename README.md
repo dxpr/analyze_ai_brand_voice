@@ -50,7 +50,7 @@ This module requires the following modules:
    (/admin/people/permissions#module-analyze_ai_brand_voice)
 
 ### Brand Voice Customization
-The default brand voice guidelines can be customized using the `hook_ai_brand_voice_alter()` hook. Currently, the CKEditor AI Agent module (a required dependency) implements this hook to provide the default brand voice settings. We are open to pull requests to improve this.
+The default brand voice guidelines can be customized using the `hook_ai_brand_voice_alter()` hook. Currently, the CKEditor AI Agent module (a required dependency) implements this hook to provide the default brand voice settings. Configure brand voice guidelines at `/admin/config/content/ckeditor-ai-agent` using the "Tone Override" and "Tone Additions" fields.
 
 Example implementation in your custom module:
 ```php
@@ -59,7 +59,6 @@ function hook_ai_brand_voice_alter(string &$brand_voice) {
   $brand_voice = 'Friendly, conversational, expert, inclusive';
 }
 ```
-
 ### Docker Commands
 
 This module uses Docker to ensure consistent development and testing
@@ -154,3 +153,4 @@ This project is sponsored by:
 
 For bug reports and feature requests, please use the project's issue queue at:
 https://www.drupal.org/project/issues/analyze_ai_brand_voice 
+
