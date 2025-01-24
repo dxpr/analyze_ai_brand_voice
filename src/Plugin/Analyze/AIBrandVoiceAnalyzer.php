@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\analyze_brand_voice\Plugin\Analyze;
+namespace Drupal\analyze_ai_brand_voice\Plugin\Analyze;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
@@ -25,11 +25,11 @@ use Drupal\ai\Plugin\ProviderProxy;
  *
  * @Analyze(
  *   id = "brand_voice_analyzer",
- *   label = @Translation("Brand Voice Analysis"),
- *   description = @Translation("Analyzes content for brand voice consistency.")
+ *   label = @Translation("AI Brand Voice Analysis"),
+ *   description = @Translation("Analyzes content for ai brand voice consistency.")
  * )
  */
-final class BrandVoiceAnalyzer extends AnalyzePluginBase {
+final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
 
   use StringTranslationTrait;
 
@@ -145,18 +145,18 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
    */
   private function createStatusTable(string $message): array {
     // If this is the AI provider message and user has permission, append link.
-    if ($message === 'No chat AI provider is configured for brand voice analysis.'
+    if ($message === 'No chat AI provider is configured for ai brand voice analysis.'
       && $this->currentUser->hasPermission('administer analyze settings')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
       $message = $this->t(
-        'No chat AI provider is configured for brand voice analysis. @link',
+        'No chat AI provider is configured for ai brand voice analysis. @link',
         ['@link' => $link->toString()]
       );
     }
 
     return [
       '#theme' => 'analyze_table',
-      '#table_title' => 'Brand Voice Analysis',
+      '#table_title' => 'AI Brand Voice Analysis',
       '#rows' => [
         [
           'label' => 'Status',
@@ -177,16 +177,16 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
    * {@inheritdoc}
    */
   public function renderSummary(EntityInterface $entity): array {
-    $score = $this->analyzeBrandVoice($entity);
+    $score = $this->analyzeAiBrandVoice($entity);
 
     if ($score === NULL) {
-      return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
+      return $this->createStatusTable('No chat AI provider is configured for ai brand voice analysis.');
     }
 
     /** @var array<string, mixed> $render */
     $render = [
       '#theme' => 'analyze_gauge',
-      '#caption' => $this->t('Brand Voice Alignment'),
+      '#caption' => $this->t('AI Brand Voice Alignment'),
       '#range_min_label' => $this->t('Off-brand'),
       '#range_mid_label' => $this->t('Neutral'),
       '#range_max_label' => $this->t('On-brand'),
@@ -226,15 +226,15 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
   }
 
   /**
-   * Analyze the brand voice of entity content.
+   * Analyze the ai brand voice of entity content.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to analyze.
    *
    * @return float|null
-   *   The brand voice score between -1.0 and 1.0, or NULL if analysis failed.
+   *   The ai brand voice score between -1.0 and 1.0, or NULL if analysis failed.
    */
-  protected function analyzeBrandVoice(EntityInterface $entity): ?float {
+  protected function analyzeAiBrandVoice(EntityInterface $entity): ?float {
     try {
       $content = $this->getHtml($entity);
 
@@ -248,9 +248,9 @@ final class BrandVoiceAnalyzer extends AnalyzePluginBase {
         return NULL;
       }
 
-      // Example brand voice guidelines.
+      // Example ai brand voice guidelines.
       $brand_voice = <<<EOT
-Our brand voice is:
+Our ai brand voice is:
 - Friendly but professional
 - Clear and concise
 - Empowering and solution-focused
@@ -266,7 +266,7 @@ We avoid:
 EOT;
 
       $prompt = <<<EOT
-<task>Analyze how well the following text aligns with our brand voice guidelines.</task>
+<task>Analyze how well the following text aligns with our ai brand voice guidelines.</task>
 
 <brand_voice>
 $brand_voice
@@ -276,10 +276,10 @@ $brand_voice
 $content
 </text>
 
-<instructions>Provide a precise score between -1.0 and +1.0 that represents how well the text aligns with our brand voice guidelines, where:
+<instructions>Provide a precise score between -1.0 and +1.0 that represents how well the text aligns with our ai brand voice guidelines, where:
 -1.0 = Completely off-brand
  0.0 = Neutral/mixed alignment
-+1.0 = Perfect brand voice alignment</instructions>
++1.0 = Perfect ai brand voice alignment</instructions>
 
 <output_format>Respond with a simple JSON object:
 {

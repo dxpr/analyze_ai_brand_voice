@@ -1,6 +1,6 @@
 {
-    "name": "drupal/analyze_brand_voice",
-    "description": "Analyzes content for brand voice consistency using AI.",
+    "name": "drupal/analyze_ai_brand_voice",
+    "description": "Analyzes content for ai brand voice consistency using AI.",
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
     "require": {
