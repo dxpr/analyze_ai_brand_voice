@@ -1,0 +1,10 @@
+name: 'Analyze Brand Voice'
+type: module
+description: 'Analyzes content for brand voice consistency using AI.'
+package: Analyze
+core_version_requirement: ^10
+configure: user.admin_permissions.module.analyze
+dependencies:
+  - analyze:analyze
+  - ai:ai 
+  - ckeditor_ai_agent:ckeditor_ai_agent
