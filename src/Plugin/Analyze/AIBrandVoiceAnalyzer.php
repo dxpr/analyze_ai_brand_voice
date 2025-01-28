@@ -322,29 +322,6 @@ EOT;
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function isApplicable(string $entity_type, ?string $bundle = NULL): bool {
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function access(EntityInterface $entity): bool {
-    return $this->currentUser->hasPermission('access content');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function extraSummaryLinks(EntityInterface $entity): array {
-    /** @var array<int, never> $links */
-    $links = [];
-    return $links;
-  }
-
-  /**
    * Gets the AI provider plugin.
    *
    * @return \Drupal\ai\Plugin\ProviderProxy|null
