@@ -1,0 +1,7 @@
+analyze_ai_brand_voice.settings:
+  type: config_object
+  label: 'Brand Voice Analysis settings'
+  mapping:
+    brand_voice:
+      type: text
+      label: 'Brand Voice Guidelines'

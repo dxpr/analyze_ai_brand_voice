@@ -1,0 +1,10 @@
+analyze_ai_brand_voice.settings:
+  route_name: analyze_ai_brand_voice.settings
+  title: 'Settings'
+  base_route: analyze_ai_brand_voice.settings
+
+analyze_ai_brand_voice.batch:
+  route_name: analyze_ai_brand_voice.batch
+  title: 'Batch Analysis'
+  base_route: analyze_ai_brand_voice.settings
+  weight: 10

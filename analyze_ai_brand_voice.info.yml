@@ -3,8 +3,7 @@ type: module
 description: 'Analyzes content for ai brand voice consistency using AI.'
 package: Analyze
 core_version_requirement: ^10.2 || ^11
-configure: analyze.analyze_settings
+configure: analyze_ai_brand_voice.settings
 dependencies:
   - analyze:analyze
-  - ai:ai 
-  - ckeditor_ai_agent:ckeditor_ai_agent
+  - ai:ai

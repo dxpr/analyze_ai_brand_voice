@@ -1,0 +1,15 @@
+analyze_ai_brand_voice.settings:
+  path: '/admin/config/analyze/brand-voice'
+  defaults:
+    _form: 'Drupal\analyze_ai_brand_voice\Form\BrandVoiceSettingsForm'
+    _title: 'Brand Voice Analysis Settings'
+  requirements:
+    _permission: 'administer analyze settings'
+
+analyze_ai_brand_voice.batch:
+  path: '/admin/config/analyze/brand-voice/batch'
+  defaults:
+    _form: 'Drupal\analyze_ai_brand_voice\Form\BrandVoiceBatchForm'
+    _title: 'Batch Brand Voice Analysis'
+  requirements:
+    _permission: 'administer analyze settings'

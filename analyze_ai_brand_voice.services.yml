@@ -1,0 +1,8 @@
+services:
+  analyze_ai_brand_voice.storage:
+    class: Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService
+    arguments: ['@database', '@entity_type.manager', '@renderer', '@language_manager', '@config.factory']
+
+  analyze_ai_brand_voice.batch_service:
+    class: Drupal\analyze_ai_brand_voice\Service\BrandVoiceBatchService
+    arguments: ['@entity_type.manager', '@analyze_ai_brand_voice.storage']

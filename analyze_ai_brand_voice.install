@@ -1,0 +1,92 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the analyze_ai_brand_voice module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function analyze_ai_brand_voice_schema() {
+  $schema = [];
+
+  $schema['analyze_ai_brand_voice_results'] = [
+    'description' => 'Stores AI brand voice analysis results for content entities.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique analysis result ID.',
+      ],
+      'entity_type' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'The entity type being analyzed.',
+      ],
+      'entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The entity ID being analyzed.',
+      ],
+      'entity_revision_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'description' => 'The entity revision ID (if applicable).',
+      ],
+      'langcode' => [
+        'type' => 'varchar',
+        'length' => 12,
+        'not null' => TRUE,
+        'description' => 'The language code of the analyzed content.',
+      ],
+      'score' => [
+        'type' => 'numeric',
+        'precision' => 3,
+        'scale' => 2,
+        'not null' => TRUE,
+        'description' => 'The brand voice score (-1.00 to +1.00).',
+      ],
+      'content_hash' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'SHA256 hash of the analyzed content.',
+      ],
+      'config_hash' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => 'MD5 hash of the brand voice configuration.',
+      ],
+      'analyzed_timestamp' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Unix timestamp when the analysis was performed.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'entity_lang' => ['entity_type', 'entity_id', 'langcode'],
+    ],
+    'indexes' => [
+      'content_hash' => ['content_hash'],
+      'analyzed_timestamp' => ['analyzed_timestamp'],
+      'entity_type_bundle' => ['entity_type', 'entity_id'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Create the brand voice analysis results table.
+ */
+function analyze_ai_brand_voice_update_10001() {
+  $schema = analyze_ai_brand_voice_schema();
+  \Drupal::database()->schema()->createTable('analyze_ai_brand_voice_results', $schema['analyze_ai_brand_voice_results']);
+}

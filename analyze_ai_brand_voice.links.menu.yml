@@ -1,0 +1,6 @@
+analyze_ai_brand_voice.settings:
+  title: 'Brand Voice Analysis'
+  description: 'Configure brand voice analysis settings and run batch analysis.'
+  route_name: analyze_ai_brand_voice.settings
+  parent: system.admin_config_analyze
+  weight: 15

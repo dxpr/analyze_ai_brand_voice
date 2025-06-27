@@ -20,6 +20,7 @@ use Drupal\analyze\HelperInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ai\Plugin\ProviderProxy;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
 
 /**
  * Brand voice analyzer that uses AI to check content against brand guidelines.
@@ -77,6 +78,13 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   protected ModuleHandlerInterface $moduleHandler;
 
   /**
+   * The brand voice storage service.
+   *
+   * @var \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService
+   */
+  protected BrandVoiceStorageService $storage;
+
+  /**
    * Creates the plugin.
    *
    * @param array<string, mixed> $configuration
@@ -103,6 +111,8 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The prompt JSON decoder service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler service.
+   * @param \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService $storage
+   *   The brand voice storage service.
    */
   public function __construct(
     array $configuration,
@@ -117,6 +127,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     MessengerInterface $messenger,
     PromptJsonDecoderInterface $promptJsonDecoder,
     ModuleHandlerInterface $moduleHandler,
+    BrandVoiceStorageService $storage,
   ) {
     $this->helper = $helper;
     $this->currentUser = $currentUser;
@@ -125,6 +136,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     $this->messenger = $messenger;
     $this->promptJsonDecoder = $promptJsonDecoder;
     $this->moduleHandler = $moduleHandler;
+    $this->storage = $storage;
   }
 
   /**
@@ -144,6 +156,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
       $container->get('messenger'),
       $container->get('ai.prompt_json_decode'),
       $container->get('module_handler'),
+      $container->get('analyze_ai_brand_voice.storage'),
     );
   }
 
@@ -190,7 +203,16 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    * {@inheritdoc}
    */
   public function renderSummary(EntityInterface $entity): array {
-    $score = $this->analyzeAiBrandVoice($entity);
+    // Try to get cached score first.
+    $score = $this->storage->getScore($entity);
+    
+    // If no cached score, perform analysis.
+    if ($score === NULL) {
+      $score = $this->analyzeAiBrandVoice($entity);
+      if ($score !== NULL) {
+        $this->storage->saveScore($entity, $score);
+      }
+    }
 
     if ($score === NULL) {
       return $this->createStatusTable('No chat AI provider is configured for ai brand voice analysis.');
@@ -239,19 +261,14 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   }
 
   /**
-   * Gets the brand voice guidelines from all contributing modules.
+   * Gets the brand voice guidelines from configuration.
    *
    * @return string
-   *   The combined brand voice guidelines.
+   *   The brand voice guidelines.
    */
   private function getBrandVoice(): string {
-    // Set default brand voice.
-    $brand_voice = 'Clear, approachable, professional, respectful';
-
-    // Allow other modules to alter the brand voice.
-    $this->moduleHandler->alter('ai_brand_voice', $brand_voice);
-
-    return $brand_voice;
+    $config = $this->getConfigFactory()->get('analyze_ai_brand_voice.settings');
+    return $config->get('brand_voice') ?: 'Clear, approachable, professional, respectful';
   }
 
   /**
