@@ -34,8 +34,10 @@ This module requires the following modules:
 
 - Analyze (drupal/analyze)
 - AI (drupal/ai)
-- CKEditor AI Agent (drupal/ckeditor_ai_agent) - Provides default brand 
-  voice settings
+
+Optional integration:
+- CKEditor AI Agent (drupal/ckeditor_ai_agent) - Can provide default brand 
+  voice settings if installed
 
 ## INSTALLATION
 
@@ -49,16 +51,25 @@ This module requires the following modules:
 3. Configure permissions for content analysis.
    (/admin/people/permissions#module-analyze_ai_brand_voice)
 
-### Brand Voice Customization
-The default brand voice guidelines can be customized using the `hook_ai_brand_voice_alter()` hook. Currently, the CKEditor AI Agent module (a required dependency) implements this hook to provide the default brand voice settings. Configure brand voice guidelines at `/admin/config/content/ckeditor-ai-agent` using the "Tone Override" and "Tone Additions" fields.
+### Brand Voice Configuration
+Configure your brand voice guidelines at `/admin/config/analyze/brand-voice` where you can set:
+- Custom brand voice guidelines text
+- Tone and style preferences
+- Writing guidelines specific to your organization
 
-Example implementation in your custom module:
+The module includes sensible defaults, but you can customize them to match your organization's specific brand voice.
+
+### Advanced Customization
+For developers, brand voice guidelines can also be customized using the `hook_ai_brand_voice_alter()` hook:
+
 ```php
-function hook_ai_brand_voice_alter(string &$brand_voice) {
+function mymodule_ai_brand_voice_alter(string &$brand_voice) {
   // Override the default brand voice guidelines
   $brand_voice = 'Friendly, conversational, expert, inclusive';
 }
 ```
+
+If the CKEditor AI Agent module is installed, it can also provide default brand voice settings that will be used as fallbacks.
 ### Docker Commands
 
 This module uses Docker to ensure consistent development and testing
@@ -110,8 +121,9 @@ requests or merging changes into the main branch.
 
 ### Basic Setup
 - Configure AI provider settings at `/admin/config/analyze/ai`
-- Enable/disable the analyzer per content type at
-`/admin/config/system/analyze-settings`
+- Configure brand voice guidelines at `/admin/config/analyze/brand-voice`
+- Enable/disable the analyzer per content type at `/admin/config/system/analyze-settings`
+- Access batch analysis tools at `/admin/config/analyze/brand-voice/batch`
 
 ### Content Type Configuration
 You can enable/disable ai brand voice analysis per content type:
@@ -127,7 +139,7 @@ You can enable/disable ai brand voice analysis per content type:
    - Find the "AI Brand Voice Analysis" settings
 
 ### Analysis Metrics
-The module evaluates content against predefined ai brand voice guidelines:
+The module evaluates content against your configured brand voice guidelines. Default guidelines include:
 
 - Friendly but professional
 - Clear and concise
@@ -135,13 +147,24 @@ The module evaluates content against predefined ai brand voice guidelines:
 - Knowledgeable without being condescending
 - Inclusive and welcoming
 
-The analysis provides a score from -1.0 (completely off-brand) to +1.0
-(perfectly aligned with ai brand voice).
+The analysis provides a score from -1.0 (completely off-brand) to +1.0 (perfectly aligned with brand voice).
 
-### Display
-- Results are shown as a gauge with clear progression
-- Score is normalized to show alignment from -1.0 to +1.0
-- Simple visual indicator of ai brand voice consistency
+### Batch Processing
+For analyzing large amounts of existing content:
+
+1. Go to `/admin/config/analyze/brand-voice/batch`
+2. Select content types to analyze
+3. Choose whether to force re-analysis of previously analyzed content
+4. Set processing limits and start the batch job
+
+Results are cached for performance and only re-analyzed when content or configuration changes.
+
+### Display and Reporting
+- Results are shown as a gauge with clear progression from -1.0 to +1.0
+- Simple visual indicator of brand voice consistency
+- Integration with Views for creating custom reports and dashboards
+- Color-coded results available with the Views Color Scales module
+- Historical tracking of brand voice alignment over time
 
 ## MAINTAINERS
 
