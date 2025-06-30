@@ -171,11 +171,11 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    */
   private function createStatusTable(string $message): array {
     // If this is the AI provider message and user has permission, append link.
-    if ($message === 'No chat AI provider is configured for ai brand voice analysis.'
+    if ($message === 'No chat AI provider is configured for brand voice analysis.'
       && $this->currentUser->hasPermission('administer analyze settings')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
       $message = $this->t(
-        'No chat AI provider is configured for ai brand voice analysis. @link',
+        'No chat AI provider is configured for brand voice analysis. @link to set up AI services for brand voice analysis.',
         ['@link' => $link->toString()]
       );
     }
@@ -215,7 +215,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     }
 
     if ($score === NULL) {
-      return $this->createStatusTable('No chat AI provider is configured for ai brand voice analysis.');
+      return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
     }
 
     /** @var array<string, mixed> $render */

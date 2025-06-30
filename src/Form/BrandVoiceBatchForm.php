@@ -48,8 +48,9 @@ final class BrandVoiceBatchForm extends FormBase {
     if (empty($available_bundles)) {
       $configure_url = Url::fromRoute('analyze.analyze_settings');
       $form['no_bundles'] = [
-        '#markup' => $this->t('<p>No content types have brand voice analysis enabled. Please <a href="@url">configure the Analyze module</a> first.</p>', [
+        '#markup' => $this->t('<p>No content types have brand voice analysis enabled. <a href="@url">Configure content types</a> to enable brand voice analysis on specific content types, or <a href="@settings_url">configure brand voice settings</a> to set up your brand guidelines.</p>', [
           '@url' => $configure_url->toString(),
+          '@settings_url' => Url::fromRoute('analyze_ai_brand_voice.settings')->toString(),
         ]),
       ];
       return $form;
