@@ -8,6 +8,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
 
@@ -35,6 +36,8 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
+   *   The typed config manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
    * @param \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService $brand_voice_storage
@@ -42,10 +45,11 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
+    TypedConfigManagerInterface $typed_config_manager,
     ModuleHandlerInterface $module_handler,
     BrandVoiceStorageService $brand_voice_storage,
   ) {
-    parent::__construct($config_factory);
+    parent::__construct($config_factory, $typed_config_manager);
     $this->moduleHandler = $module_handler;
     $this->brandVoiceStorage = $brand_voice_storage;
   }
@@ -56,6 +60,7 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('config.factory'),
+      $container->get('config.typed'),
       $container->get('module_handler'),
       $container->get('analyze_ai_brand_voice.storage')
     );
