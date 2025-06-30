@@ -205,7 +205,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   public function renderSummary(EntityInterface $entity): array {
     // Try to get cached score first.
     $score = $this->storage->getScore($entity);
-    
+
     // If no cached score, perform analysis.
     if ($score === NULL) {
       $score = $this->analyzeAiBrandVoice($entity);
@@ -278,7 +278,8 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The entity to analyze.
    *
    * @return float|null
-   *   The ai brand voice score between -1.0 and 1.0, or NULL if analysis failed.
+   *   The ai brand voice score between -1.0 and 1.0, or NULL if analysis
+   *   failed.
    */
   protected function analyzeAiBrandVoice(EntityInterface $entity): ?float {
     try {
@@ -327,7 +328,7 @@ EOT;
 
       $decoded = $this->promptJsonDecoder->decode($message);
 
-      if (!is_array($decoded) || !isset($decoded['score'])) {
+      if (!is_array($decoded) || !array_key_exists('score', $decoded) || !is_numeric($decoded['score'])) {
         return NULL;
       }
 
@@ -364,11 +365,11 @@ EOT;
   /**
    * Gets the default model configuration.
    *
-   * @return array<string, string>|null
+   * @return array{provider_id: string, model_id: string}|null
    *   The default model configuration or NULL if not available.
    */
   private function getDefaultModel(): ?array {
-    /** @var array<string, string>|null $defaults */
+    /** @var array{provider_id: string, model_id: string}|null $defaults */
     $defaults = $this->aiProvider->getDefaultProviderForOperationType('chat');
     if (empty($defaults['provider_id']) || empty($defaults['model_id'])) {
       return NULL;

@@ -7,3 +7,4 @@ configure: analyze_ai_brand_voice.settings
 dependencies:
   - analyze:analyze
   - ai:ai
+  - views_color_scales:views_color_scales

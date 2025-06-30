@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker compose run:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(chmod:*)",
+      "Bash(./.git/hooks/pre-commit:*)"
+    ],
+    "deny": []
+  }
+}

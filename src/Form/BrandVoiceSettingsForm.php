@@ -6,11 +6,60 @@ namespace Drupal\analyze_ai_brand_voice\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
 
 /**
  * Configure brand voice analysis settings.
  */
 final class BrandVoiceSettingsForm extends ConfigFormBase {
+
+  /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected ModuleHandlerInterface $moduleHandler;
+
+  /**
+   * The brand voice storage service.
+   *
+   * @var \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService
+   */
+  protected BrandVoiceStorageService $brandVoiceStorage;
+
+  /**
+   * Constructs a new BrandVoiceSettingsForm.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
+   * @param \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService $brand_voice_storage
+   *   The brand voice storage service.
+   */
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    ModuleHandlerInterface $module_handler,
+    BrandVoiceStorageService $brand_voice_storage,
+  ) {
+    parent::__construct($config_factory);
+    $this->moduleHandler = $module_handler;
+    $this->brandVoiceStorage = $brand_voice_storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('module_handler'),
+      $container->get('analyze_ai_brand_voice.storage')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -37,7 +86,7 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
     ];
 
     $default_brand_voice = $this->getDefaultBrandVoice();
-    
+
     $form['brand_voice'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Brand Voice Guidelines'),
@@ -86,8 +135,9 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
       ->set('brand_voice', trim($form_state->getValue('brand_voice')))
       ->save();
 
-    // Invalidate all cached brand voice analysis results since configuration changed.
-    \Drupal::service('analyze_ai_brand_voice.storage')->invalidateConfigCache();
+    // Invalidate all cached brand voice analysis results since configuration
+    // changed.
+    $this->brandVoiceStorage->invalidateConfigCache();
 
     parent::submitForm($form, $form_state);
   }
@@ -100,8 +150,8 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
    */
   private function getDefaultBrandVoice(): string {
     // Try to get brand voice from CKEditor AI Agent if module exists.
-    if (\Drupal::moduleHandler()->moduleExists('ckeditor_ai_agent')) {
-      $config = \Drupal::config('ckeditor_ai_agent.settings');
+    if ($this->moduleHandler->moduleExists('ckeditor_ai_agent')) {
+      $config = $this->configFactory->get('ckeditor_ai_agent.settings');
       $brand_voice = $config->get('brand_voice');
       if (!empty($brand_voice)) {
         return $brand_voice;

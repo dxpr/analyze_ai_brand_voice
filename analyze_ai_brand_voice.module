@@ -38,9 +38,9 @@ function _analyze_ai_brand_voice_is_supported_entity(EntityInterface $entity): b
   // Check if this entity type/bundle has brand voice analysis enabled.
   $config = \Drupal::config('analyze.settings');
   $status = $config->get('status') ?? [];
-  
+
   $entity_type_id = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
-  
+
   return isset($status[$entity_type_id][$bundle]['brand_voice_analyzer']);
 }

@@ -8,9 +8,10 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\RevisionableInterface;
 
 /**
  * Service for storing and retrieving brand voice analysis results.
@@ -23,8 +24,8 @@ final class BrandVoiceStorageService {
     private readonly Connection $database,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly RendererInterface $renderer,
-    private readonly LanguageManagerInterface $languageManager,
     private readonly ConfigFactoryInterface $configFactory,
+    private readonly TimeInterface $time,
   ) {}
 
   /**
@@ -39,7 +40,7 @@ final class BrandVoiceStorageService {
   public function getScore(EntityInterface $entity): ?float {
     $content_hash = $this->generateContentHash($entity);
     $config_hash = $this->generateConfigHash();
-    
+
     $result = $this->database->select('analyze_ai_brand_voice_results', 'r')
       ->fields('r', ['score'])
       ->condition('entity_type', $entity->getEntityTypeId())
@@ -64,7 +65,7 @@ final class BrandVoiceStorageService {
   public function saveScore(EntityInterface $entity, float $score): void {
     // Ensure score is within valid range.
     $score = max(-1.0, min(1.0, $score));
-    
+
     $this->database->merge('analyze_ai_brand_voice_results')
       ->keys([
         'entity_type' => $entity->getEntityTypeId(),
@@ -72,11 +73,11 @@ final class BrandVoiceStorageService {
         'langcode' => $entity->language()->getId(),
       ])
       ->fields([
-        'entity_revision_id' => $entity->getRevisionId(),
+        'entity_revision_id' => $entity instanceof RevisionableInterface ? $entity->getRevisionId() : 0,
         'score' => $score,
         'content_hash' => $this->generateContentHash($entity),
         'config_hash' => $this->generateConfigHash(),
-        'analyzed_timestamp' => \Drupal::time()->getRequestTime(),
+        'analyzed_timestamp' => $this->time->getRequestTime(),
       ])
       ->execute();
   }
@@ -108,7 +109,7 @@ final class BrandVoiceStorageService {
   /**
    * Gets statistics about stored analysis results.
    *
-   * @return array
+   * @return array{total_results: int, unique_entities: int, average_score: float, oldest_analysis: int, newest_analysis: int}
    *   Array with count statistics.
    */
   public function getStatistics(): array {
@@ -118,9 +119,9 @@ final class BrandVoiceStorageService {
     $query->addExpression('AVG(score)', 'average_score');
     $query->addExpression('MIN(analyzed_timestamp)', 'oldest_analysis');
     $query->addExpression('MAX(analyzed_timestamp)', 'newest_analysis');
-    
+
     $result = $query->execute()->fetchAssoc();
-    
+
     return [
       'total_results' => (int) $result['total_results'],
       'unique_entities' => (int) $result['unique_entities'],
@@ -154,7 +155,7 @@ final class BrandVoiceStorageService {
     // Get the brand voice configuration from settings.
     $config = $this->configFactory->get('analyze_ai_brand_voice.settings');
     $brand_voice = $config->get('brand_voice') ?: 'Clear, approachable, professional, respectful';
-    
+
     return hash('md5', $brand_voice);
   }
 
@@ -170,23 +171,23 @@ final class BrandVoiceStorageService {
   private function getEntityContent(EntityInterface $entity): string {
     // Use the entity's own language, not the current UI language.
     $langcode = $entity->language()->getId();
-    
+
     // Render the entity in default view mode.
     $view_builder = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
     $view = $view_builder->view($entity, 'default', $langcode);
     $rendered = $this->renderer->render($view);
-    
+
     // Convert to string and clean up.
     $content = is_object($rendered) && method_exists($rendered, '__toString')
       ? $rendered->__toString()
       : (string) $rendered;
-    
+
     // Strip HTML tags and normalize whitespace.
     $content = strip_tags($content);
     $content = str_replace('&nbsp;', ' ', $content);
     $content = preg_replace('/\s+/', ' ', $content);
     $content = trim($content);
-    
+
     return $content;
   }
 

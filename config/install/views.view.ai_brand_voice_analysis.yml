@@ -8,6 +8,8 @@ dependencies:
     - analyze_ai_brand_voice
     - node
     - views_color_scales
+_core:
+  default_config_hash: bVy7x3jl52OXDPnEl8BtShtyjzWsjtaIF00Pd-1pAtI
 id: ai_brand_voice_analysis
 label: 'AI Brand Voice Analysis'
 module: views
@@ -22,7 +24,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'AI Brand Voice Analysis'
+      title: 'Brand Voice Analysis Results'
       fields:
         title:
           id: title

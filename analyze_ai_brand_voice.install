@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the analyze_ai_brand_voice module.
+ * Install, update and uninstall functions for analyze_ai_brand_voice module.
  */
 
 /**
@@ -104,7 +104,7 @@ function analyze_ai_brand_voice_uninstall() {
   // Clean up any remaining data if tables exist.
   $database = \Drupal::database();
   $schema = $database->schema();
-  
+
   if ($schema->tableExists('analyze_ai_brand_voice_results')) {
     $database->delete('analyze_ai_brand_voice_results')->execute();
   }
