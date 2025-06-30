@@ -26,7 +26,7 @@ use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
  * Brand voice analyzer that uses AI to check content against brand guidelines.
  *
  * @Analyze(
- *   id = "brand_voice_analyzer",
+ *   id = "analyze_ai_brand_voice_analyzer",
  *   label = @Translation("AI Brand Voice Analysis"),
  *   description = @Translation("Analyzes content for ai brand voice consistency.")
  * )
