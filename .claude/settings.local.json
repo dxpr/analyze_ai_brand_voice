@@ -5,7 +5,10 @@
       "Bash(grep:*)",
       "Bash(ls:*)",
       "Bash(chmod:*)",
-      "Bash(./.git/hooks/pre-commit:*)"
+      "Bash(./.git/hooks/pre-commit:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)",
+      "Bash(git check-ignore:*)"
     ],
     "deny": []
   }

@@ -109,3 +109,35 @@ function analyze_ai_brand_voice_uninstall() {
     $database->delete('analyze_ai_brand_voice_results')->execute();
   }
 }
+
+/**
+ * Update plugin ID from brand_voice_analyzer to analyze_ai_brand_voice_analyzer.
+ */
+function analyze_ai_brand_voice_update_8001() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('analyze.settings');
+  $status = $config->get('status') ?? [];
+  $updated = FALSE;
+
+  // Update plugin IDs in analyze.settings configuration.
+  foreach ($status as $entity_type => $bundles) {
+    foreach ($bundles as $bundle => $analyzers) {
+      if (isset($analyzers['brand_voice_analyzer'])) {
+        // Copy old setting to new plugin ID.
+        $analyzers['analyze_ai_brand_voice_analyzer'] = $analyzers['brand_voice_analyzer'];
+        // Remove old plugin ID.
+        unset($analyzers['brand_voice_analyzer']);
+        // Update the configuration.
+        $status[$entity_type][$bundle] = $analyzers;
+        $updated = TRUE;
+      }
+    }
+  }
+
+  if ($updated) {
+    $config->set('status', $status)->save();
+    return t('Updated brand voice analyzer plugin ID from "brand_voice_analyzer" to "analyze_ai_brand_voice_analyzer" in analyze settings.');
+  }
+
+  return t('No brand voice analyzer settings found to update.');
+}
