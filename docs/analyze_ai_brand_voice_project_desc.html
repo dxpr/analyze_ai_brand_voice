@@ -1,0 +1,30 @@
+<p>
+  The AI Brand Voice Analysis is part of the <a href="https://www.drupal.org/project/ai">AI module</a> ecosystem. It provides AI-powered brand voice consistency analysis for Drupal content, measuring how well content aligns with your organization's brand voice guidelines. The brand voice guidelines can be customized through Drupal's hook system.
+</p>
+
+<h3 id="module-project--features">Features</h3>
+<ul>
+  <li>AI-powered analysis of content against brand voice guidelines</li>
+  <li>Instant feedback through visual gauge display</li>
+  <li>Integration with the Analyze framework for consistent reporting</li>
+  <li>Customizable brand voice guidelines through hook_ai_brand_voice_alter()</li>
+</ul>
+
+<h3 id="module-project--post-installation">Post-installation</h3>
+<ol>
+  <li>Configure AI provider settings at /admin/config/ai/providers</li>
+  <li>Configure brand voice settings at /admin/config/analyze/brand-voice</li>
+  <li>Enable/disable the analyzer per content type at /admin/config/content/analyze-settings</li>
+  <li>Configure permissions at /admin/people/permissions#module-analyze_ai_brand_voice</li>
+  <li>Access brand voice analysis through the Analyze tab on content</li>
+</ol>
+
+<h3 id="module-project--additional-requirements">Additional requirements</h3>
+<p>
+  This module requires:
+  <ul>
+    <li><a href="https://www.drupal.org/project/analyze">Analyze</a> module</li>
+    <li><a href="https://www.drupal.org/project/ai">AI</a> module with a configured provider</li>
+    <li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> module (provides colored tables for report page)</li>
+  </ul>
+</p>

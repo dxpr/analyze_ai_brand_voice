@@ -8,24 +8,23 @@
 
 ## INTRODUCTION
 
-The Analyze AI Brand Voice module provides AI-powered ai brand voice consistency
+The AI Brand Voice Analysis module provides AI-powered brand voice consistency
 analysis for Drupal content, measuring how well content aligns with your
-organization's ai brand voice guidelines.
+organization's brand voice guidelines.
 
 The primary use case for this module is to:
 
 - **Analyze** content using AI processing
-- **Score** text content against ai brand voice guidelines:
-  - Overall alignment with ai brand voice (-1 to 1)
+- **Score** text content against brand voice guidelines
 - **Guide** content creators with instant AI feedback
 - **Customize** brand voice guidelines through a simple hook
 
 Goals:
 
-- A focused AI brand voice analysis solution for Drupal content
+- A focused brand voice analysis solution for Drupal content
 - A stable, maintainable API for AI-powered content evaluation
 - Integration with the Analyze framework for consistent reporting
-- Simple, zero-configuration setup with built-in ai brand voice guidelines
+- Simple setup with built-in brand voice guidelines
 - Flexible brand voice customization through Drupal's hook system
 
 ## REQUIREMENTS
@@ -160,18 +159,18 @@ requests or merging changes into the main branch.
 ## CONFIGURATION
 
 ### Basic Setup
-- Configure AI provider settings at `/admin/config/analyze/ai`
+- Configure AI provider settings at `/admin/config/ai/providers`
 - Configure brand voice guidelines at
   `/admin/config/analyze/brand-voice`
 - Enable/disable the analyzer per content type at
-  `/admin/config/system/analyze-settings`
+  `/admin/config/content/analyze-settings`
 - Access batch analysis tools at `/admin/config/analyze/brand-voice/batch`
 
 ### Content Type Configuration
-You can enable/disable ai brand voice analysis per content type:
+You can enable/disable brand voice analysis per content type:
 
 1. Through the analyze settings:
-   - Go to `/admin/config/system/analyze-settings`
+   - Go to `/admin/config/content/analyze-settings`
    - Find the "AI Brand Voice Analysis" section
    - Enable/disable for specific content types
 
@@ -190,8 +189,7 @@ Default guidelines include:
 - Knowledgeable without being condescending
 - Inclusive and welcoming
 
-The analysis provides a score from -1.0 (completely off-brand) to +1.0
-(perfectly aligned with brand voice).
+The analysis provides a score indicating brand voice alignment.
 
 ### Batch Processing
 For analyzing large amounts of existing content:
