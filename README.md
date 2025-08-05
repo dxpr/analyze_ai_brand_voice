@@ -1,221 +1,93 @@
-## CONTENTS OF THIS FILE
+# AI Brand Voice Analysis
 
-- Introduction
-- Requirements
-- Installation
-- Configuration
-- Maintainers
+AI-powered brand voice consistency analysis measuring content alignment against your brand guidelines.
 
-## INTRODUCTION
+## Features
 
-The AI Brand Voice Analysis module provides AI-powered brand voice consistency
-analysis for Drupal content, measuring how well content aligns with your
-organization's brand voice guidelines.
+- **Brand Voice Analysis**: AI evaluation against customizable brand guidelines
+- **Visual Feedback**: Gauge displays with alignment scores (-1.0 to +1.0)
+- **Analyze Framework Integration**: Consistent reporting across analysis tools
+- **Batch Processing**: Analyze large content volumes efficiently
+- **Custom Guidelines**: Hook-based customization for organization-specific requirements
 
-The primary use case for this module is to:
+## Requirements
 
-- **Analyze** content using AI processing
-- **Score** text content against brand voice guidelines
-- **Guide** content creators with instant AI feedback
-- **Customize** brand voice guidelines through a simple hook
+- [Analyze](https://www.drupal.org/project/analyze) framework
+- [AI](https://www.drupal.org/project/ai) module with configured provider
 
-Goals:
+Optional:
+- [CKEditor AI Agent](https://www.drupal.org/project/ckeditor_ai_agent) - Provides default brand voice settings
 
-- A focused brand voice analysis solution for Drupal content
-- A stable, maintainable API for AI-powered content evaluation
-- Integration with the Analyze framework for consistent reporting
-- Simple setup with built-in brand voice guidelines
-- Flexible brand voice customization through Drupal's hook system
+## Installation
 
-## REQUIREMENTS
+```bash
+composer require drupal/analyze_ai_brand_voice
+drush en analyze_ai_brand_voice
+```
 
-This module requires the following modules:
+## Configuration
 
-- Analyze (drupal/analyze)
-- AI (drupal/ai)
+### Basic Setup
+1. Configure AI provider at `/admin/config/ai/providers`
+2. Set brand voice guidelines at `/admin/config/analyze/brand-voice`
+3. Enable per content type at `/admin/config/content/analyze-settings`
+4. Configure permissions at `/admin/people/permissions#module-analyze_ai_brand_voice`
 
-Optional integration:
-- CKEditor AI Agent (drupal/ckeditor_ai_agent) - Can provide default brand 
-  voice settings if installed
-
-## INSTALLATION
-
-1. If your site is managed via Composer, use:
-   ```composer require "drupal/analyze_ai_brand_voice"```
-   Otherwise, copy the module to your Drupal installation's modules directory.
-
-2. Enable the 'Analyze AI Brand Voice' module in 'Extend'.
-   (/admin/modules)
-
-3. Configure permissions for content analysis.
-   (/admin/people/permissions#module-analyze_ai_brand_voice)
-
-### Brand Voice Configuration
-Configure your brand voice guidelines at `/admin/config/analyze/brand-voice`
-where you can set:
+### Brand Voice Guidelines
+Configure at `/admin/config/analyze/brand-voice`:
 - Custom brand voice guidelines text
 - Tone and style preferences
-- Writing guidelines specific to your organization
+- Organization-specific writing standards
 
-The module includes sensible defaults, but you can customize them to match
-your organization's specific brand voice.
+Default guidelines include:
+- Friendly but professional
+- Clear and concise
+- Empowering and solution-focused
+- Knowledgeable without condescension
+- Inclusive and welcoming
 
 ### Advanced Customization
-For developers, brand voice guidelines can also be customized using the
-`hook_ai_brand_voice_alter()` hook:
+Use `hook_ai_brand_voice_alter()` for programmatic customization:
 
 ```php
 function mymodule_ai_brand_voice_alter(string &$brand_voice) {
-  // Override the default brand voice guidelines
   $brand_voice = 'Friendly, conversational, expert, inclusive';
 }
 ```
 
-If the CKEditor AI Agent module is installed, it can also provide default
-brand voice settings that will be used as fallbacks.
+### Batch Processing
+1. Go to `/admin/config/analyze/brand-voice/batch`
+2. Select content types and processing options
+3. Set limits and start batch job
+4. Monitor progress and server resources
+
+## Analysis
+
+Results show brand voice alignment scores with visual gauge progression. Cache invalidation is automatic - only re-analyzes when content or configuration changes.
+
+### Display Options
+- Gauge visualization with clear progression
+- Historical tracking of alignment over time
+- Views integration for custom reports
+- Color-coded results with Views Color Scales module
+
+## Development
+
 ### Docker Commands
-
-This module uses Docker to ensure consistent development and testing
-environments. Here are the key Docker commands you can use:
-
-#### Linting Drupal Code
-
-To run the Drupal linter:
-
 ```bash
+# Lint code
 docker compose run --rm drupal-lint
-```
 
-This command checks your Drupal code for adherence to coding standards and best
-practices.
-
-#### Running Drupal Deprecation and Analysis Checks
-
-To perform Drupal deprecation and analysis checks:
-
-```bash
+# Check deprecations
 docker compose run --rm drupal-check
-```
 
-This command analyzes your code for usage of deprecated Drupal APIs and other
-potential issues.
-
-#### Auto-fixing Drupal Code
-
-To automatically fix some coding standard issues:
-
-```bash
+# Auto-fix issues
 docker compose run --rm drupal-lint-auto-fix
 ```
 
-This command will attempt to automatically fix coding standard violations in
-your Drupal code.
+### Pre-commit Hook
+Automatically runs linting checks before commits:
+- Auto-fixes coding standard violations
+- Blocks commits with remaining issues
+- Provides colored output for feedback
 
-#### Pre-commit Hook
-
-This repository includes a pre-commit hook that automatically runs linting
-checks before each commit. The hook will:
-
-1. **Auto-fix issues**: Run `drupal-lint-auto-fix` to automatically resolve
-   fixable coding standard violations
-2. **Verify compliance**: Run `drupal-lint` to check for any remaining issues
-3. **Block commits**: Prevent commits if any coding standard violations remain
-
-The pre-commit hook is automatically installed at `.git/hooks/pre-commit` and
-provides colored output to clearly show the linting process and results.
-
-**Benefits:**
-- Ensures all committed code follows Drupal coding standards
-- Automatically fixes common issues before commit
-- Prevents "broken" commits that don't pass linting
-- Provides immediate feedback during development
-
-**Manual Installation:**
-If you need to manually install or reinstall the pre-commit hook:
-
-```bash
-chmod +x .git/hooks/pre-commit
-```
-
-**Bypassing the Hook:**
-In rare cases where you need to bypass the pre-commit hook:
-
-```bash
-git commit --no-verify -m "Your commit message"
-```
-
-**Note:** Use `--no-verify` sparingly and ensure you fix any linting issues
-in a follow-up commit.
-
-#### Environment Variables
-
-The `DRUPAL_RECOMMENDED_PROJECT` environment variable is already defined in the
-process. You don't need to specify it when running the commands.
-
-These Docker commands help maintain code quality and compatibility across
-different Drupal versions. Make sure to run these checks before submitting pull
-requests or merging changes into the main branch.
-
-## CONFIGURATION
-
-### Basic Setup
-- Configure AI provider settings at `/admin/config/ai/providers`
-- Configure brand voice guidelines at
-  `/admin/config/analyze/brand-voice`
-- Enable/disable the analyzer per content type at
-  `/admin/config/content/analyze-settings`
-- Access batch analysis tools at `/admin/config/analyze/brand-voice/batch`
-
-### Content Type Configuration
-You can enable/disable brand voice analysis per content type:
-
-1. Through the analyze settings:
-   - Go to `/admin/config/content/analyze-settings`
-   - Find the "AI Brand Voice Analysis" section
-   - Enable/disable for specific content types
-
-2. Through individual content:
-   - View any content piece
-   - Look for the Analyze tab or section
-   - Find the "AI Brand Voice Analysis" settings
-
-### Analysis Metrics
-The module evaluates content against your configured brand voice guidelines.
-Default guidelines include:
-
-- Friendly but professional
-- Clear and concise
-- Empowering and solution-focused
-- Knowledgeable without being condescending
-- Inclusive and welcoming
-
-The analysis provides a score indicating brand voice alignment.
-
-### Batch Processing
-For analyzing large amounts of existing content:
-
-1. Go to `/admin/config/analyze/brand-voice/batch`
-2. Select content types to analyze
-3. Choose whether to force re-analysis of previously analyzed content
-4. Set processing limits and start the batch job
-
-Results are cached for performance and only re-analyzed when content or
-configuration changes.
-
-### Display and Reporting
-- Results are shown as a gauge with clear progression from -1.0 to +1.0
-- Simple visual indicator of brand voice consistency
-- Integration with Views for creating custom reports and dashboards
-- Color-coded results available with the Views Color Scales module
-- Historical tracking of brand voice alignment over time
-
-## MAINTAINERS
-
-Current maintainers:
-- Jurriaan Roelofs - https://www.drupal.org/u/jurriaanroelofs
-
-This project is sponsored by:
-- DXPR - https://www.drupal.org/node/2303425
-
-For bug reports and feature requests, please use the project's issue queue at:
-https://www.drupal.org/project/issues/analyze_ai_brand_voice
