@@ -1,6 +1,7 @@
 # AI Brand Voice Analysis
 
-AI-powered brand voice consistency analysis measuring content alignment against your brand guidelines.
+AI-powered brand voice consistency analysis measuring content alignment against
+your brand guidelines.
 
 ## Features
 
@@ -8,7 +9,8 @@ AI-powered brand voice consistency analysis measuring content alignment against 
 - **Visual Feedback**: Gauge displays with alignment scores (-1.0 to +1.0)
 - **Analyze Framework Integration**: Consistent reporting across analysis tools
 - **Batch Processing**: Analyze large content volumes efficiently
-- **Custom Guidelines**: Hook-based customization for organization-specific requirements
+- **Custom Guidelines**: Hook-based customization for organization-specific
+  requirements
 
 ## Requirements
 
@@ -63,7 +65,9 @@ function mymodule_ai_brand_voice_alter(string &$brand_voice) {
 
 ## Analysis
 
-Results show brand voice alignment scores with visual gauge progression. Cache invalidation is automatic - only re-analyzes when content or configuration changes.
+Results show brand voice alignment scores with visual gauge progression.
+Cache invalidation is automatic - only re-analyzes when content or
+configuration changes.
 
 ### Display Options
 - Gauge visualization with clear progression

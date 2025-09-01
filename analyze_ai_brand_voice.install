@@ -2,8 +2,7 @@
 
 /**
  * @file
- * Install, update and uninstall functions for analyze_ai_brand_voice
- * module.
+ * Install, update and uninstall functions for analyze_ai_brand_voice module.
  */
 
 /**
@@ -113,8 +112,7 @@ function analyze_ai_brand_voice_uninstall() {
 }
 
 /**
- * Update plugin ID from brand_voice_analyzer to
- * analyze_ai_brand_voice_analyzer.
+ * Update plugin ID to analyze_ai_brand_voice_analyzer.
  */
 function analyze_ai_brand_voice_update_8001() {
   $config_factory = \Drupal::configFactory();
