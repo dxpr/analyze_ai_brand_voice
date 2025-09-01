@@ -64,7 +64,7 @@ function analyze_ai_brand_voice_views_pre_render(ViewExecutable $view) {
         'content' => '',
       ],
     ];
-    
+
     // Build the settings link if user has permission.
     $current_user = \Drupal::currentUser();
     if ($current_user->hasPermission('administer analyze settings')) {
@@ -74,12 +74,12 @@ function analyze_ai_brand_voice_views_pre_render(ViewExecutable $view) {
         $link = $link->toRenderable();
         $link['#attributes']['class'][] = 'button';
         $link['#attributes']['class'][] = 'button--small';
-        
+
         // Render the link and add it to the header.
         $renderer = \Drupal::service('renderer');
         $rendered_link = $renderer->renderRoot($link);
         $options['area_text_custom']['content'] = '<div class="form-actions">' . $rendered_link . '</div>';
-        
+
         // Set the header option.
         $view->display_handler->setOption('header', $options);
       }
