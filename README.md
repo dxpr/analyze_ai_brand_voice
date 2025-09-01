@@ -90,4 +90,3 @@ Automatically runs linting checks before commits:
 - Auto-fixes coding standard violations
 - Blocks commits with remaining issues
 - Provides colored output for feedback
-

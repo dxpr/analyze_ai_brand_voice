@@ -2,7 +2,8 @@
 
 /**
  * @file
- * Install, update and uninstall functions for analyze_ai_brand_voice module.
+ * Install, update and uninstall functions for analyze_ai_brand_voice
+ * module.
  */
 
 /**
@@ -12,7 +13,8 @@ function analyze_ai_brand_voice_schema() {
   $schema = [];
 
   $schema['analyze_ai_brand_voice_results'] = [
-    'description' => 'Stores AI brand voice analysis results for content entities.',
+    'description' => 'Stores AI brand voice analysis results for
+      content entities.',
     'fields' => [
       'id' => [
         'type' => 'serial',
@@ -111,7 +113,8 @@ function analyze_ai_brand_voice_uninstall() {
 }
 
 /**
- * Update plugin ID from brand_voice_analyzer to analyze_ai_brand_voice_analyzer.
+ * Update plugin ID from brand_voice_analyzer to
+ * analyze_ai_brand_voice_analyzer.
  */
 function analyze_ai_brand_voice_update_8001() {
   $config_factory = \Drupal::configFactory();
@@ -124,7 +127,8 @@ function analyze_ai_brand_voice_update_8001() {
     foreach ($bundles as $bundle => $analyzers) {
       if (isset($analyzers['brand_voice_analyzer'])) {
         // Copy old setting to new plugin ID.
-        $analyzers['analyze_ai_brand_voice_analyzer'] = $analyzers['brand_voice_analyzer'];
+        $analyzers['analyze_ai_brand_voice_analyzer'] =
+          $analyzers['brand_voice_analyzer'];
         // Remove old plugin ID.
         unset($analyzers['brand_voice_analyzer']);
         // Update the configuration.
@@ -136,7 +140,9 @@ function analyze_ai_brand_voice_update_8001() {
 
   if ($updated) {
     $config->set('status', $status)->save();
-    return t('Updated brand voice analyzer plugin ID from "brand_voice_analyzer" to "analyze_ai_brand_voice_analyzer" in analyze settings.');
+    return t('Updated brand voice analyzer plugin ID from
+      "brand_voice_analyzer" to "analyze_ai_brand_voice_analyzer"
+      in analyze settings.');
   }
 
   return t('No brand voice analyzer settings found to update.');

@@ -9,6 +9,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
 
@@ -89,6 +91,27 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
     $form['description'] = [
       '#markup' => $this->t('<p>Configure the brand voice guidelines used for AI analysis. These guidelines will be used to evaluate how well content aligns with your brand voice.</p>'),
     ];
+
+    // Add link to reports page if user has permission.
+    $current_user = \Drupal::currentUser();
+    if ($current_user->hasPermission('access site reports')) {
+      $reports_url = Url::fromRoute('view.ai_brand_voice_analysis.page_1');
+      if ($reports_url->access()) {
+        $form['actions_top'] = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['form-actions']],
+          '#weight' => -10,
+          'report_link' => [
+            '#type' => 'link',
+            '#title' => $this->t('View reports'),
+            '#url' => $reports_url,
+            '#attributes' => [
+              'class' => ['button', 'button--small', 'button--primary'],
+            ],
+          ],
+        ];
+      }
+    }
 
     $default_brand_voice = $this->getDefaultBrandVoice();
 
