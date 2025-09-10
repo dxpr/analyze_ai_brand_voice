@@ -8,7 +8,7 @@ else
   DRUPAL_RECOMMENDED_PROJECT=${DRUPAL_RECOMMENDED_PROJECT:-11.x-dev}
 fi
 PHP_EXTENSIONS="gd"
-DRUPAL_CHECK_TOOL="mglaman/drupal-check"
+DRUPAL_CHECK_TOOL="mglaman/drupal-check:^1.4"
 
 # Install required PHP extensions
 for ext in $PHP_EXTENSIONS; do
