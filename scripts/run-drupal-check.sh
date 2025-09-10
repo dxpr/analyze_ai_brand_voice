@@ -8,7 +8,6 @@ else
   DRUPAL_RECOMMENDED_PROJECT=${DRUPAL_RECOMMENDED_PROJECT:-11.x-dev}
 fi
 PHP_EXTENSIONS="gd"
-DRUPAL_CHECK_TOOL="mglaman/drupal-check:^1.4"
 
 # Install required PHP extensions
 for ext in $PHP_EXTENSIONS; do
@@ -39,8 +38,14 @@ fi
 # Install module dependencies required for static analysis
 composer require drupal/analyze drupal/ai drupal/views_color_scales --dev
 
-# Install drupal-check with version constraints that work with Drupal 11
-composer require $DRUPAL_CHECK_TOOL --dev --with-all-dependencies
+# Install PHPStan with Drupal extensions (alternative to drupal-check)
+composer require --dev phpstan/phpstan phpstan/extension-installer mglaman/phpstan-drupal phpstan/phpstan-deprecation-rules
 
-# Run drupal-check
-./vendor/bin/drupal-check --drupal-root . -ad web/modules/contrib/analyze_ai_brand_voice
+# Copy PHPStan configuration to the Drupal root
+cp /src/phpstan.neon phpstan.neon
+
+# Create symlink to module for analysis (in web/modules/contrib)
+# (already done above in the symlink section)
+
+# Run PHPStan analysis (equivalent to drupal-check)
+./vendor/bin/phpstan analyse web/modules/contrib/analyze_ai_brand_voice --no-progress

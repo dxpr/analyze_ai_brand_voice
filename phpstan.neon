@@ -1,0 +1,14 @@
+parameters:
+  level: 6
+  paths:
+    - src/
+  # Drupal root directory
+  drupal:
+    drupal_root: web
+  # Report deprecations and basic analysis errors
+  customRulesetUsed: true
+  reportUnmatchedIgnoredErrors: false
+
+includes:
+  - vendor/mglaman/phpstan-drupal/extension.neon
+  - vendor/phpstan/phpstan-deprecation-rules/rules.neon
