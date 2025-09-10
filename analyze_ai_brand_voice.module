@@ -51,10 +51,6 @@ function _analyze_ai_brand_voice_is_supported_entity(EntityInterface $entity): b
 /**
  * Implements hook_views_pre_view().
  */
-
-/**
- * @param array<int, mixed> $args
- */
 function analyze_ai_brand_voice_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
   // Add settings link to the brand voice analysis view header.
   if ($view->id() === 'ai_brand_voice_analysis' && $display_id === 'page_1') {

@@ -10,10 +10,6 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * Implements hook_schema().
  */
-
-/**
- * @return array<string, mixed>
- */
 function analyze_ai_brand_voice_schema(): array {
   $schema = [];
 
