@@ -38,4 +38,4 @@ composer require drupal/analyze drupal/ai drupal/views_color_scales --dev
 composer require $DRUPAL_CHECK_TOOL --dev
 
 # Run drupal-check
-./vendor/bin/drupal-check --drupal-root . -ad web/modules/contrib/analyze_ai_brand_voice 
+./vendor/bin/drupal-check --drupal-root . -ad web/modules/contrib/analyze_ai_brand_voice
