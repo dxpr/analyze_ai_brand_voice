@@ -89,6 +89,9 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<int, string>
+   *   An array of configuration object names that are editable.
    */
   protected function getEditableConfigNames(): array {
     return ['analyze_ai_brand_voice.settings'];
@@ -96,6 +99,14 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array<string, mixed>
+   *   The form array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('analyze_ai_brand_voice.settings');
@@ -168,6 +179,11 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('analyze_ai_brand_voice.settings')

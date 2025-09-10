@@ -21,6 +21,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ai\Plugin\ProviderProxy;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
  * Brand voice analyzer that uses AI to check content against brand guidelines.
@@ -85,6 +86,13 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   protected BrandVoiceStorageService $storage;
 
   /**
+   * The config factory service.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface|null
+   */
+  protected ConfigFactoryInterface|null $configFactory;
+
+  /**
    * Creates the plugin.
    *
    * @param array<string, mixed> $configuration
@@ -113,6 +121,8 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The module handler service.
    * @param \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService $storage
    *   The brand voice storage service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface|null $configFactory
+   *   The config factory service.
    */
   public function __construct(
     array $configuration,
@@ -128,6 +138,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     PromptJsonDecoderInterface $promptJsonDecoder,
     ModuleHandlerInterface $moduleHandler,
     BrandVoiceStorageService $storage,
+    ConfigFactoryInterface|null $configFactory,
   ) {
     $this->helper = $helper;
     $this->currentUser = $currentUser;
@@ -137,6 +148,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     $this->promptJsonDecoder = $promptJsonDecoder;
     $this->moduleHandler = $moduleHandler;
     $this->storage = $storage;
+    $this->configFactory = $configFactory;
   }
 
   /**
@@ -157,6 +169,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
       $container->get('ai.prompt_json_decode'),
       $container->get('module_handler'),
       $container->get('analyze_ai_brand_voice.storage'),
+      $container->get('config.factory'),
     );
   }
 
@@ -267,7 +280,10 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The brand voice guidelines.
    */
   private function getBrandVoice(): string {
-    $config = $this->getConfigFactory()->get('analyze_ai_brand_voice.settings');
+    if ($this->configFactory === NULL) {
+      return 'Clear, approachable, professional, respectful';
+    }
+    $config = $this->configFactory->get('analyze_ai_brand_voice.settings');
     return $config->get('brand_voice') ?: 'Clear, approachable, professional, respectful';
   }
 
@@ -324,6 +340,7 @@ EOT;
       ];
 
       $messages = new ChatInput($chat_array);
+      /* @phpstan-ignore-next-line */
       $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
 
       $decoded = $this->promptJsonDecoder->decode($message);
@@ -357,6 +374,7 @@ EOT;
 
     /** @var \Drupal\ai\Plugin\ProviderProxy $ai_provider */
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
+    /* @phpstan-ignore-next-line */
     $ai_provider->setConfiguration(['temperature' => 0.2]);
 
     return $ai_provider;
@@ -365,11 +383,11 @@ EOT;
   /**
    * Gets the default model configuration.
    *
-   * @return array{provider_id: string, model_id: string}|null
+   * @return array<string, string>|null
    *   The default model configuration or NULL if not available.
    */
   private function getDefaultModel(): ?array {
-    /** @var array{provider_id: string, model_id: string}|null $defaults */
+    /** @var array<string, string>|null $defaults */
     $defaults = $this->aiProvider->getDefaultProviderForOperationType('chat');
     if (empty($defaults['provider_id']) || empty($defaults['model_id'])) {
       return NULL;

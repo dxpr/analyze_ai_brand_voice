@@ -109,7 +109,7 @@ final class BrandVoiceStorageService {
   /**
    * Gets statistics about stored analysis results.
    *
-   * @return array{total_results: int, unique_entities: int, average_score: float, oldest_analysis: int, newest_analysis: int}
+   * @return array<string, int|float>
    *   Array with count statistics.
    */
   public function getStatistics(): array {

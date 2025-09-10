@@ -37,6 +37,14 @@ final class BrandVoiceBatchForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array<string, mixed>
+   *   The form array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['description'] = [
@@ -93,6 +101,11 @@ final class BrandVoiceBatchForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $values = $form_state->getValues();
@@ -134,9 +147,9 @@ final class BrandVoiceBatchForm extends FormBase {
    *
    * @param bool $success
    *   Whether the batch completed successfully.
-   * @param array $results
+   * @param array<string, mixed> $results
    *   The batch results.
-   * @param array $operations
+   * @param array<int, mixed> $operations
    *   The batch operations.
    */
   public static function batchFinished(bool $success, array $results, array $operations): void {

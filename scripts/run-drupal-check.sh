@@ -31,6 +31,9 @@ if [[ $DRUPAL_RECOMMENDED_PROJECT == 11.* ]]; then
   composer require drupal/statistics
 fi
 
+# Install module dependencies required for static analysis
+composer require drupal/analyze drupal/ai drupal/views_color_scales --dev
+
 # Install drupal-check
 composer require $DRUPAL_CHECK_TOOL --dev
 

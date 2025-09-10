@@ -8,7 +8,11 @@
 /**
  * Implements hook_views_data().
  */
-function analyze_ai_brand_voice_views_data() {
+
+/**
+ * @return array<string, mixed>
+ */
+function analyze_ai_brand_voice_views_data(): array {
   $data = [];
 
   $data['analyze_ai_brand_voice_results']['table']['group'] = t('Brand Voice Analysis');
