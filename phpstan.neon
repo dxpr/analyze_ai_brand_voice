@@ -1,7 +1,7 @@
 parameters:
   level: 6
   paths:
-    - src/
+    - web/modules/contrib/analyze_ai_brand_voice/src/
   # Drupal root directory
   drupal:
     drupal_root: web
@@ -9,6 +9,4 @@ parameters:
   customRulesetUsed: true
   reportUnmatchedIgnoredErrors: false
 
-includes:
-  - vendor/mglaman/phpstan-drupal/extension.neon
-  - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+# Don't include extension files manually - phpstan/extension-installer handles this automatically
