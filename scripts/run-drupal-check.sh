@@ -1,7 +1,12 @@
 #!/bin/bash
 set -vo pipefail
 
-DRUPAL_RECOMMENDED_PROJECT=${DRUPAL_RECOMMENDED_PROJECT:-11.x-dev}
+# Support both environment variable names (local vs GitHub Actions)
+if [[ -n "${TARGET_DRUPAL_CORE_VERSION:-}" ]]; then
+  DRUPAL_RECOMMENDED_PROJECT="${TARGET_DRUPAL_CORE_VERSION}.x-dev"
+else
+  DRUPAL_RECOMMENDED_PROJECT=${DRUPAL_RECOMMENDED_PROJECT:-11.x-dev}
+fi
 PHP_EXTENSIONS="gd"
 DRUPAL_CHECK_TOOL="mglaman/drupal-check"
 
