@@ -39,8 +39,8 @@ fi
 # Install module dependencies required for static analysis
 composer require drupal/analyze drupal/ai drupal/views_color_scales --dev
 
-# Install drupal-check
-composer require $DRUPAL_CHECK_TOOL --dev
+# Install drupal-check with version constraints that work with Drupal 11
+composer require $DRUPAL_CHECK_TOOL --dev --with-all-dependencies
 
 # Run drupal-check
 ./vendor/bin/drupal-check --drupal-root . -ad web/modules/contrib/analyze_ai_brand_voice
