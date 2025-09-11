@@ -214,7 +214,19 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     }
 
     if ($score === NULL) {
-      return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
+      // Check if content exists first.
+      if (!empty($this->getHtml($entity))) {
+        $ai_provider = $this->getAiProvider();
+        if (!$ai_provider) {
+          return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
+        }
+        else {
+          return $this->createStatusTable('AI analysis failed to generate score. Check logs for details or try again.');
+        }
+      }
+      else {
+        return $this->createStatusTable('This content has no text available for brand voice analysis. Add content such as body text, fields, or descriptions to enable analysis.');
+      }
     }
 
     /** @var array<string, mixed> $render */
