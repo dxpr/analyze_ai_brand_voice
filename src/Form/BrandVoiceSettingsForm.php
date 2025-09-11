@@ -12,6 +12,7 @@ use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
+use Drupal\Core\Session\AccountProxyInterface;
 
 /**
  * Configure brand voice analysis settings.
@@ -33,6 +34,13 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
   protected BrandVoiceStorageService $brandVoiceStorage;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
    * Constructs a new BrandVoiceSettingsForm.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -43,16 +51,20 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
    *   The module handler service.
    * @param \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService $brand_voice_storage
    *   The brand voice storage service.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
     ModuleHandlerInterface $module_handler,
     BrandVoiceStorageService $brand_voice_storage,
+    AccountProxyInterface $current_user,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
     $this->moduleHandler = $module_handler;
     $this->brandVoiceStorage = $brand_voice_storage;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -63,7 +75,8 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('config.typed'),
       $container->get('module_handler'),
-      $container->get('analyze_ai_brand_voice.storage')
+      $container->get('analyze_ai_brand_voice.storage'),
+      $container->get('current_user')
     );
   }
 
@@ -92,8 +105,7 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
     ];
 
     // Add link to reports page if user has permission.
-    $current_user = \Drupal::currentUser();
-    if ($current_user->hasPermission('access site reports')) {
+    if ($this->currentUser->hasPermission('access site reports')) {
       $reports_url = Url::fromRoute('view.ai_brand_voice_analysis.page_1');
       if ($reports_url->access()) {
         $form['actions_top'] = [

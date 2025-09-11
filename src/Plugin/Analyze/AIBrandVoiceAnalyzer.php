@@ -18,7 +18,6 @@ use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\analyze\HelperInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\ai\Plugin\ProviderProxy;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
 
@@ -215,7 +214,19 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     }
 
     if ($score === NULL) {
-      return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
+      // Check if content exists first.
+      if (!empty($this->getHtml($entity))) {
+        $ai_provider = $this->getAiProvider();
+        if (!$ai_provider) {
+          return $this->createStatusTable('No chat AI provider is configured for brand voice analysis.');
+        }
+        else {
+          return $this->createStatusTable('AI analysis failed to generate score. Check logs for details or try again.');
+        }
+      }
+      else {
+        return $this->createStatusTable('This content has no text available for brand voice analysis. Add content such as body text, fields, or descriptions to enable analysis.');
+      }
     }
 
     /** @var array<string, mixed> $render */
@@ -248,9 +259,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
     $rendered = $this->renderer->render($view);
 
-    $content = is_object($rendered) && method_exists($rendered, '__toString')
-      ? $rendered->__toString()
-      : (string) $rendered;
+    $content = (string) $rendered;
 
     $content = strip_tags($content);
     $content = str_replace('&nbsp;', ' ', $content);
@@ -324,7 +333,16 @@ EOT;
       ];
 
       $messages = new ChatInput($chat_array);
-      $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
+
+      // Use the chat method if it exists.
+      if (method_exists($ai_provider, 'chat')) {
+        /** @var \Drupal\ai\OperationType\Chat\ChatOutput $chat_output */
+        $chat_output = $ai_provider->chat($messages, $defaults['model_id']);
+        $message = $chat_output->getNormalized();
+      }
+      else {
+        return NULL;
+      }
 
       $decoded = $this->promptJsonDecoder->decode($message);
 
@@ -342,10 +360,10 @@ EOT;
   /**
    * Gets the AI provider plugin.
    *
-   * @return \Drupal\ai\Plugin\ProviderProxy|null
+   * @return object|null
    *   The AI provider plugin or NULL if not configured.
    */
-  private function getAiProvider(): ?ProviderProxy {
+  private function getAiProvider() {
     if (!$this->aiProvider->hasProvidersForOperationType('chat', TRUE)) {
       return NULL;
     }
@@ -355,9 +373,12 @@ EOT;
       return NULL;
     }
 
-    /** @var \Drupal\ai\Plugin\ProviderProxy $ai_provider */
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
-    $ai_provider->setConfiguration(['temperature' => 0.2]);
+
+    // Set configuration if the method exists.
+    if (method_exists($ai_provider, 'setConfiguration')) {
+      $ai_provider->setConfiguration(['temperature' => 0.2]);
+    }
 
     return $ai_provider;
   }

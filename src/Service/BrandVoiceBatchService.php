@@ -46,10 +46,12 @@ final class BrandVoiceBatchService {
     foreach ($entity_bundles as $entity_bundle) {
       [$entity_type_id, $bundle] = explode(':', $entity_bundle);
 
-      $query = $this->entityTypeManager->getStorage($entity_type_id)
-        ->getQuery()
-        ->accessCheck(TRUE)
-        ->condition('type', $bundle);
+      $storage = $this->entityTypeManager->getStorage($entity_type_id);
+      $query = $storage->getQuery();
+      // Disable access check for batch processing to analyze all content.
+      $access_disabled = FALSE;
+      $query->accessCheck($access_disabled);
+      $query->condition('type', $bundle);
 
       // Only include published content.
       if ($entity_type_id === 'node') {
@@ -195,9 +197,12 @@ final class BrandVoiceBatchService {
    */
   private function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
     // Get entities that have valid cached analysis.
-    $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', $bundle);
+    $storage = $this->entityTypeManager->getStorage($entity_type_id);
+    $query = $storage->getQuery();
+    // Disable access check for internal analysis to get all entities.
+    $access_disabled = FALSE;
+    $query->accessCheck($access_disabled);
+    $query->condition('type', $bundle);
 
     $all_ids = $query->execute();
     $analyzed_ids = [];

@@ -178,9 +178,7 @@ final class BrandVoiceStorageService {
     $rendered = $this->renderer->render($view);
 
     // Convert to string and clean up.
-    $content = is_object($rendered) && method_exists($rendered, '__toString')
-      ? $rendered->__toString()
-      : (string) $rendered;
+    $content = (string) $rendered;
 
     // Strip HTML tags and normalize whitespace.
     $content = strip_tags($content);
