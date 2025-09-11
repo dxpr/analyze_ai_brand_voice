@@ -18,7 +18,7 @@ use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\analyze\HelperInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService;
 
 /**
@@ -70,18 +70,18 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   protected HelperInterface $helper;
 
   /**
-   * The module handler service.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected ModuleHandlerInterface $moduleHandler;
-
-  /**
    * The brand voice storage service.
    *
    * @var \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService
    */
   protected BrandVoiceStorageService $storage;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface|null
+   */
+  protected ?ConfigFactoryInterface $configFactory;
 
   /**
    * Creates the plugin.
@@ -108,10 +108,10 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The messenger service.
    * @param \Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface $promptJsonDecoder
    *   The prompt JSON decoder service.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *   The module handler service.
    * @param \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService $storage
    *   The brand voice storage service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface|null $config_factory
+   *   The config factory.
    */
   public function __construct(
     array $configuration,
@@ -120,21 +120,21 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     HelperInterface $helper,
     AccountProxyInterface $currentUser,
     AiProviderPluginManager $aiProvider,
+    ?ConfigFactoryInterface $config_factory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
     protected LanguageManagerInterface $languageManager,
     MessengerInterface $messenger,
     PromptJsonDecoderInterface $promptJsonDecoder,
-    ModuleHandlerInterface $moduleHandler,
     BrandVoiceStorageService $storage,
   ) {
     $this->helper = $helper;
     $this->currentUser = $currentUser;
     parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
     $this->aiProvider = $aiProvider;
+    $this->configFactory = $config_factory;
     $this->messenger = $messenger;
     $this->promptJsonDecoder = $promptJsonDecoder;
-    $this->moduleHandler = $moduleHandler;
     $this->storage = $storage;
   }
 
@@ -149,12 +149,12 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
       $container->get('analyze.helper'),
       $container->get('current_user'),
       $container->get('ai.provider'),
+      $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('renderer'),
       $container->get('language_manager'),
       $container->get('messenger'),
       $container->get('ai.prompt_json_decode'),
-      $container->get('module_handler'),
       $container->get('analyze_ai_brand_voice.storage'),
     );
   }
@@ -270,6 +270,16 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   }
 
   /**
+   * Gets the config factory.
+   *
+   * @return \Drupal\Core\Config\ConfigFactoryInterface
+   *   The config factory.
+   */
+  private function getConfigFactory(): ConfigFactoryInterface {
+    return $this->configFactory ?: \Drupal::configFactory();
+  }
+
+  /**
    * Gets the brand voice guidelines from configuration.
    *
    * @return string
@@ -334,15 +344,8 @@ EOT;
 
       $messages = new ChatInput($chat_array);
 
-      // Use the chat method if it exists.
-      if (method_exists($ai_provider, 'chat')) {
-        /** @var \Drupal\ai\OperationType\Chat\ChatOutput $chat_output */
-        $chat_output = $ai_provider->chat($messages, $defaults['model_id']);
-        $message = $chat_output->getNormalized();
-      }
-      else {
-        return NULL;
-      }
+      /** @var \Drupal\ai\OperationType\Chat\ChatInterface $ai_provider */
+      $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
 
       $decoded = $this->promptJsonDecoder->decode($message);
 
@@ -375,7 +378,7 @@ EOT;
 
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
 
-    // Set configuration if the method exists.
+    // Configure provider with low temperature for more consistent results.
     if (method_exists($ai_provider, 'setConfiguration')) {
       $ai_provider->setConfiguration(['temperature' => 0.2]);
     }
