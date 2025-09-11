@@ -101,7 +101,7 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
     $config = $this->config('analyze_ai_brand_voice.settings');
 
     $form['description'] = [
-      '#markup' => $this->t('<p>Configure the brand voice guidelines used for AI analysis. These guidelines will be used to evaluate how well content aligns with your brand voice.</p>'),
+      '#markup' => $this->t('<p>Configure the brand voice guidelines used for AI analysis. These guidelines will be used to evaluate how well content aligns with your brand voice. Need help defining your brand voice? Try the <a href=":url" target="_blank">DXPR Tone of Voice Wizard</a>.</p>', [':url' => 'https://dxpr.com/tools/tone-of-voice']),
     ];
 
     // Add link to reports page if user has permission.
@@ -146,22 +146,6 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
         '#weight' => -1,
       ];
     }
-
-    $form['examples'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Brand Voice Examples'),
-      '#open' => FALSE,
-      'content' => [
-        '#theme' => 'item_list',
-        '#title' => $this->t('Good brand voice descriptions:'),
-        '#items' => [
-          $this->t('<strong>Technology Company:</strong> "Clear, concise, innovative yet accessible. Avoid jargon while maintaining technical accuracy. Confident but not arrogant."'),
-          $this->t('<strong>Healthcare Provider:</strong> "Compassionate, trustworthy, professional. Use plain language to explain complex topics. Reassuring and supportive tone."'),
-          $this->t('<strong>Financial Services:</strong> "Authoritative, transparent, reliable. Professional language with clear explanations. Builds confidence and trust."'),
-          $this->t('<strong>Creative Agency:</strong> "Bold, creative, energetic. Conversational and inspiring. Uses vivid language and storytelling elements."'),
-        ],
-      ],
-    ];
 
     return parent::buildForm($form, $form_state);
   }
