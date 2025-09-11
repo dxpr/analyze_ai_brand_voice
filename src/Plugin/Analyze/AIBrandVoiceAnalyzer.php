@@ -275,8 +275,11 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    * @return \Drupal\Core\Config\ConfigFactoryInterface
    *   The config factory.
    */
-  private function getConfigFactory(): ConfigFactoryInterface {
-    return $this->configFactory ?: \Drupal::configFactory();
+  protected function getConfigFactory(): ConfigFactoryInterface {
+    if (!$this->configFactory) {
+      throw new \RuntimeException('Config factory not injected');
+    }
+    return $this->configFactory;
   }
 
   /**
