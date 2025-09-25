@@ -56,33 +56,11 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   protected PromptJsonDecoderInterface $promptJsonDecoder;
 
   /**
-   * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountProxyInterface
-   */
-  protected AccountProxyInterface $currentUser;
-
-  /**
-   * The analyze helper.
-   *
-   * @var \Drupal\analyze\HelperInterface
-   */
-  protected HelperInterface $helper;
-
-
-  /**
    * The brand voice storage service.
    *
    * @var \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService
    */
   protected BrandVoiceStorageService $storage;
-
-  /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface|null
-   */
-  protected ?ConfigFactoryInterface $configFactory;
 
   /**
    * Creates the plugin.
@@ -99,6 +77,8 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The current user.
    * @param \Drupal\ai\AiProviderPluginManager $aiProvider
    *   The AI provider manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
    * @param \Drupal\Core\Render\RendererInterface $renderer
@@ -111,8 +91,6 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
    *   The prompt JSON decoder service.
    * @param \Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService $storage
    *   The brand voice storage service.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface|null $config_factory
-   *   The config factory.
    */
   public function __construct(
     array $configuration,
@@ -121,7 +99,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     HelperInterface $helper,
     AccountProxyInterface $currentUser,
     AiProviderPluginManager $aiProvider,
-    ?ConfigFactoryInterface $config_factory,
+    ConfigFactoryInterface $configFactory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
     protected LanguageManagerInterface $languageManager,
@@ -129,11 +107,8 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
     PromptJsonDecoderInterface $promptJsonDecoder,
     BrandVoiceStorageService $storage,
   ) {
-    $this->helper = $helper;
-    $this->currentUser = $currentUser;
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser, $configFactory);
     $this->aiProvider = $aiProvider;
-    $this->configFactory = $config_factory;
     $this->messenger = $messenger;
     $this->promptJsonDecoder = $promptJsonDecoder;
     $this->storage = $storage;
