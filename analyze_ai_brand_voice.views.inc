@@ -71,10 +71,10 @@ function analyze_ai_brand_voice_views_data() {
   $data['analyze_ai_brand_voice_results']['langcode'] = [
     'title' => t('Language'),
     'help' => t('The language of the analyzed content.'),
-    'field' => ['id' => 'standard'],
-    'filter' => ['id' => 'string'],
+    'field' => ['id' => 'language'],
+    'filter' => ['id' => 'language'],
     'sort' => ['id' => 'standard'],
-    'argument' => ['id' => 'string'],
+    'argument' => ['id' => 'language'],
   ];
 
   // Brand voice score field.
