@@ -201,16 +201,12 @@ final class BrandVoiceStorageService {
    *   The count of analyzed entities.
    */
   public function countAnalyzedEntities(string $entity_type_id, string $bundle): int {
-    if ($entity_type_id !== 'node') {
-      return (int) $this->database->select('analyze_ai_brand_voice_results', 'r')
-        ->condition('r.entity_type', $entity_type_id)
-        ->countQuery()
-        ->execute()
-        ->fetchField();
-    }
     $query = $this->database->select('analyze_ai_brand_voice_results', 'r');
-    $query->join('node_field_data', 'n', 'r.entity_id = n.nid AND r.entity_type = :type', [':type' => 'node']);
-    $query->condition('n.type', $bundle);
+    $query->condition('r.entity_type', $entity_type_id);
+    if ($entity_type_id === 'node') {
+      $query->join('node_field_data', 'n', 'r.entity_id = n.nid AND r.entity_type = :type', [':type' => 'node']);
+      $query->condition('n.type', $bundle);
+    }
     $query->addExpression('COUNT(DISTINCT r.entity_id)');
     return (int) $query->execute()->fetchField();
   }
