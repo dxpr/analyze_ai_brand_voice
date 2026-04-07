@@ -57,25 +57,35 @@ function mymodule_ai_brand_voice_alter(string &$brand_voice) {
 }
 ```
 
-## CLI & AI Agent Support
+## AI Coding Assistant Integration
 
-### Batch Processing
+The Brand Voice module includes a built-in
+[Agent Skills](https://agentskills.io) file (via the base
+Analyze module) that teaches AI coding assistants how to run
+brand voice analysis through natural language. Run
+`drush analyze:setup-ai` to enable, then ask naturally:
 
-Batch analysis is available through the centralized Analyze
+```
+"Analyze brand voice consistency on all articles"
+"Check if the about page aligns with our brand guidelines"
+"Re-analyze brand voice for all published content"
+"Run brand voice and sentiment analysis together on blog posts"
+```
+
+Batch processing is available via the centralized Analyze
 batch system:
 
-- **Admin UI**: Administration > Configuration > Content >
-  Batch Analysis (`/admin/config/content/analyze-batch`)
-- **Drush CLI**:
-  `drush analyze:batch --analyzers=analyze_ai_brand_voice_analyzer`
+```bash
+drush analyze:batch \
+  --analyzers=analyze_ai_brand_voice_analyzer
+drush analyze:batch \
+  --analyzers=analyze_ai_brand_voice_analyzer \
+  --types=node:article --force
+```
 
-See the [Analyze module](https://www.drupal.org/project/analyze)
-for full batch command options.
-
-### AI Agent Integration
-
-AI agents can access brand voice analysis through the centralized
-Analyze skill files. Install with `drush analyze:setup-ai`.
+Compatible with Claude Code, Codex CLI, Gemini CLI, GitHub
+Copilot, Cursor, and other tools supporting the
+[Agent Skills standard](https://agentskills.io/specification).
 
 ## Analysis
 
