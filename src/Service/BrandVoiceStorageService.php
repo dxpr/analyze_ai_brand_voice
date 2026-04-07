@@ -175,7 +175,7 @@ final class BrandVoiceStorageService {
     // Render the entity in default view mode.
     $view_builder = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
     $view = $view_builder->view($entity, 'default', $langcode);
-    $rendered = $this->renderer->render($view);
+    $rendered = $this->renderer->renderPlain($view);
 
     // Convert to string and clean up.
     $content = (string) $rendered;
