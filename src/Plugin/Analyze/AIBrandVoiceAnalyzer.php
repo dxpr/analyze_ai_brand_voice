@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\analyze\AnalyzePluginBase;
+use Drupal\analyze\BatchableAnalyzerInterface;
 use Drupal\ai\AiProviderPluginManager;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
@@ -30,7 +31,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
  *   description = @Translation("Analyzes content for ai brand voice consistency.")
  * )
  */
-final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
+final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableAnalyzerInterface {
 
   use StringTranslationTrait;
 
@@ -165,6 +166,30 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
         ],
       ],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function processEntity(EntityInterface $entity, bool $force_refresh = FALSE): bool {
+    if (!$force_refresh && $this->hasResults($entity)) {
+      return FALSE;
+    }
+    if ($force_refresh) {
+      $this->storage->deleteScores($entity);
+    }
+    // Buffer output to prevent JSON corruption during batch.
+    ob_start();
+    $this->renderSummary($entity);
+    ob_end_clean();
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasResults(EntityInterface $entity): bool {
+    return $this->storage->getScore($entity) !== NULL;
   }
 
   /**

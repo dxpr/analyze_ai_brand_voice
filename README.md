@@ -58,10 +58,16 @@ function mymodule_ai_brand_voice_alter(string &$brand_voice) {
 ```
 
 ### Batch Processing
-1. Go to `/admin/config/analyze/brand-voice/batch`
-2. Select content types and processing options
-3. Set limits and start batch job
-4. Monitor progress and server resources
+
+Batch analysis is available through the centralized Analyze batch system:
+
+- **Admin UI**: Navigate to Administration > Configuration > Content > Batch
+  Analysis (`/admin/config/content/analyze-batch`), select "AI Brand Voice
+  Analysis" and your desired content types.
+- **Drush CLI**: `drush analyze:batch --analyzers=analyze_ai_brand_voice_analyzer`
+
+See the [Analyze module documentation](https://www.drupal.org/project/analyze)
+for full batch command options including `--types`, `--limit`, and `--force`.
 
 ## Analysis
 
