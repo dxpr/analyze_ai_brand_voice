@@ -2,10 +2,12 @@
 
 namespace Drupal\analyze_ai_brand_voice\Plugin\Analyze;
 
+use Drupal\ai\Exception\AiRateLimitException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\analyze\AnalyzePluginBase;
+use Drupal\analyze\BatchableAnalyzerInterface;
 use Drupal\ai\AiProviderPluginManager;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
@@ -30,7 +32,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
  *   description = @Translation("Analyzes content for ai brand voice consistency.")
  * )
  */
-final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
+final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableAnalyzerInterface {
 
   use StringTranslationTrait;
 
@@ -170,6 +172,38 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   /**
    * {@inheritdoc}
    */
+  public function processEntity(EntityInterface $entity, bool $force_refresh = FALSE): bool {
+    if (!$force_refresh && $this->hasResults($entity)) {
+      return FALSE;
+    }
+    if ($force_refresh) {
+      $this->storage->deleteScores($entity);
+    }
+    $score = $this->analyzeAiBrandVoice($entity);
+    if ($score !== NULL) {
+      $this->storage->saveScore($entity, $score);
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasResults(EntityInterface $entity): bool {
+    return $this->storage->getScore($entity) !== NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function countAnalyzedEntities(string $entity_type_id, string $bundle): int {
+    return $this->storage->countAnalyzedEntities($entity_type_id, $bundle);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getFullReportUrl(EntityInterface $entity): ?Url {
     return NULL;
   }
@@ -233,7 +267,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase {
   private function getHtml(EntityInterface $entity): string {
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
-    $rendered = $this->renderer->render($view);
+    $rendered = $this->renderer->renderInIsolation($view);
 
     $content = (string) $rendered;
 
@@ -320,6 +354,9 @@ EOT;
       }
 
       return max(-1.0, min(1.0, (float) $decoded['score']));
+    }
+    catch (AiRateLimitException $e) {
+      throw $e;
     }
     catch (\Exception $e) {
       return NULL;

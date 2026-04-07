@@ -57,11 +57,45 @@ function mymodule_ai_brand_voice_alter(string &$brand_voice) {
 }
 ```
 
-### Batch Processing
-1. Go to `/admin/config/analyze/brand-voice/batch`
-2. Select content types and processing options
-3. Set limits and start batch job
-4. Monitor progress and server resources
+## AI Coding Assistant Integration
+
+The Brand Voice module includes a built-in
+[Agent Skills](https://agentskills.io) file (via the base
+Analyze module) that teaches AI coding assistants how to run
+brand voice analysis through natural language. Run
+`drush analyze:setup-ai` to enable, then ask naturally:
+
+```
+"Analyze brand voice consistency on all articles"
+"Check if the about page aligns with our brand guidelines"
+"Re-analyze brand voice for all published content"
+"Run brand voice and sentiment analysis together on blog posts"
+```
+
+Batch processing is available via the centralized Analyze
+batch system:
+
+```bash
+# Check analysis coverage
+drush analyze:batch --status
+
+# Run this analyzer on all enabled content types
+drush analyze:batch \
+  --analyzers=analyze_ai_brand_voice_analyzer
+
+# Run on specific content types with limit
+drush analyze:batch \
+  --analyzers=analyze_ai_brand_voice_analyzer \
+  --types=node:article --limit=50
+
+# Force re-analysis of already analyzed content
+drush analyze:batch \
+  --analyzers=analyze_ai_brand_voice_analyzer --force
+```
+
+Compatible with Claude Code, Codex CLI, Gemini CLI, GitHub
+Copilot, Cursor, and other tools supporting the
+[Agent Skills standard](https://agentskills.io/specification).
 
 ## Analysis
 
