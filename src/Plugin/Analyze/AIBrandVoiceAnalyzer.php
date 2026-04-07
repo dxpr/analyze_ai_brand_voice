@@ -346,6 +346,9 @@ EOT;
 
       return max(-1.0, min(1.0, (float) $decoded['score']));
     }
+    catch (\Drupal\ai\Exception\AiRateLimitException $e) {
+      throw $e;
+    }
     catch (\Exception $e) {
       return NULL;
     }
