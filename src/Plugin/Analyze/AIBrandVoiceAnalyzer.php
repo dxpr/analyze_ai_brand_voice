@@ -179,11 +179,12 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableA
     if ($force_refresh) {
       $this->storage->deleteScores($entity);
     }
-    // Buffer output to prevent JSON corruption during batch.
-    ob_start();
-    $this->renderSummary($entity);
-    ob_end_clean();
-    return TRUE;
+    $score = $this->analyzeAiBrandVoice($entity);
+    if ($score !== NULL) {
+      $this->storage->saveScore($entity, $score);
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
