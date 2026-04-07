@@ -2,6 +2,7 @@
 
 namespace Drupal\analyze_ai_brand_voice\Plugin\Analyze;
 
+use Drupal\ai\Exception\AiRateLimitException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
@@ -195,6 +196,13 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableA
   /**
    * {@inheritdoc}
    */
+  public function countAnalyzedEntities(string $entity_type_id, string $bundle): int {
+    return $this->storage->countAnalyzedEntities($entity_type_id, $bundle);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getFullReportUrl(EntityInterface $entity): ?Url {
     return NULL;
   }
@@ -346,7 +354,7 @@ EOT;
 
       return max(-1.0, min(1.0, (float) $decoded['score']));
     }
-    catch (\Drupal\ai\Exception\AiRateLimitException $e) {
+    catch (AiRateLimitException $e) {
       throw $e;
     }
     catch (\Exception $e) {
