@@ -267,7 +267,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableA
   private function getHtml(EntityInterface $entity): string {
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
-    $rendered = $this->renderer->renderPlain($view);
+    $rendered = $this->renderer->renderInIsolation($view);
 
     $content = (string) $rendered;
 
