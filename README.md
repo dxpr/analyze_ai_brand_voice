@@ -1,4 +1,4 @@
-# AI Brand Voice Analysis
+# AI Brand Voice Analysis :)
 
 AI-powered brand voice consistency analysis measuring content alignment against
 your brand guidelines.
