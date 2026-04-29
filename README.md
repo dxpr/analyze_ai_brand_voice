@@ -1,4 +1,8 @@
-# AI Brand Voice Analysis
+> Part of [DXPR CMS](https://dxpr.com/c/marketing-cms): The AI-Powered Drupal CMS
+>
+> [Documentation](https://dxpr.com/docs) | [Try Free](https://dxpr.com/try) | [dxpr.com](https://dxpr.com)
+
+# AI Brand Voice Analysis: AI-Powered Brand Voice Consistency Scoring for Drupal
 
 AI-powered brand voice consistency analysis measuring content alignment against
 your brand guidelines.
@@ -128,3 +132,9 @@ Automatically runs linting checks before commits:
 - Auto-fixes coding standard violations
 - Blocks commits with remaining issues
 - Provides colored output for feedback
+
+## Related DXPR Modules
+
+- [Analyze](https://www.drupal.org/project/analyze)
+- [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments)
+- [AI Content Strategy](https://www.drupal.org/project/ai_content_strategy)
