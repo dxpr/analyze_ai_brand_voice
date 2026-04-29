@@ -139,8 +139,18 @@ Automatically runs linting checks before commits:
 
 ## Related Modules
 
-- [Analyze](https://www.drupal.org/project/analyze) - Content analysis framework with unified Analyze tab
+Required dependencies - this module directly uses their APIs:
+
+- [Analyze](https://www.drupal.org/project/analyze) - Content analysis framework; this module extends AnalyzePluginBase and implements BatchableAnalyzerInterface
+- [AI](https://www.drupal.org/project/ai) - LLM provider layer; used for chat completions (AiProviderPluginManager, ChatInput, PromptJsonDecoder) and rate-limit handling
+- [Views Color Scales](https://www.drupal.org/project/views_color_scales) - Color-coded score display in the bundled brand voice Views report
+
+Optional integration:
+
+- [CKEditor AI Agent](https://www.drupal.org/project/ckeditor_ai_agent) - When installed, brand voice guidelines are auto-populated from CKEditor AI Agent settings as a default
+
+Sibling Analyze plugins:
+
 - [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments) - Multi-dimensional content tone analysis
-- [AI Content Strategy](https://www.drupal.org/project/ai_content_strategy) - AI-powered content strategy recommendations
-- [AI](https://www.drupal.org/project/ai) - Drupal AI integration layer for connecting to LLM providers
-- [Metatag](https://www.drupal.org/project/metatag) - Manage meta tags for improved SEO and social sharing
+- [Broken Links Analyzer](https://www.drupal.org/project/analyze_broken_links) - Link health monitoring per page
+- [Search Console Analyzer](https://www.drupal.org/project/analyze_search_console) - Google Search performance per page
