@@ -1,4 +1,12 @@
-# AI Brand Voice Analysis
+> **Analyze AI Brand Voice** detects brand voice drift across your Drupal site
+> using AI tone analysis. An [Analyze](https://www.drupal.org/project/analyze)
+> ecosystem plugin by [DXPR](https://dxpr.com).
+>
+> [Getting Started](https://dxpr.com/c/getting-started) |
+> [Pricing](https://dxpr.com/pricing) |
+> [Try Free Demo](https://dxpr.com/try)
+
+# AI Brand Voice Analysis: AI-Powered Brand Voice Consistency Scoring for Drupal
 
 AI-powered brand voice consistency analysis measuring content alignment against
 your brand guidelines.
@@ -128,3 +136,21 @@ Automatically runs linting checks before commits:
 - Auto-fixes coding standard violations
 - Blocks commits with remaining issues
 - Provides colored output for feedback
+
+## Related Modules
+
+Required dependencies - this module directly uses their APIs:
+
+- [Analyze](https://www.drupal.org/project/analyze) - Content analysis framework; this module extends AnalyzePluginBase and implements BatchableAnalyzerInterface
+- [AI](https://www.drupal.org/project/ai) - LLM provider layer; used for chat completions (AiProviderPluginManager, ChatInput, PromptJsonDecoder) and rate-limit handling
+- [Views Color Scales](https://www.drupal.org/project/views_color_scales) - Color-coded score display in the bundled brand voice Views report
+
+Optional integration:
+
+- [CKEditor AI Agent](https://www.drupal.org/project/ckeditor_ai_agent) - When installed, brand voice guidelines are auto-populated from CKEditor AI Agent settings as a default
+
+Sibling Analyze plugins:
+
+- [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments) - Multi-dimensional content tone analysis
+- [Broken Links Analyzer](https://www.drupal.org/project/analyze_broken_links) - Link health monitoring per page
+- [Search Console Analyzer](https://www.drupal.org/project/analyze_search_console) - Google Search performance per page
