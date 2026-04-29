@@ -1,6 +1,10 @@
-> Part of [DXPR CMS](https://dxpr.com/c/marketing-cms): The AI-Powered Drupal CMS
+> **Analyze AI Brand Voice** detects brand voice drift across your Drupal site
+> using AI tone analysis. An [Analyze](https://www.drupal.org/project/analyze)
+> ecosystem plugin by [DXPR](https://dxpr.com).
 >
-> [Documentation](https://dxpr.com/docs) | [Try Free](https://dxpr.com/try) | [dxpr.com](https://dxpr.com)
+> [Getting Started](https://dxpr.com/c/getting-started) |
+> [Pricing](https://dxpr.com/pricing) |
+> [Try Free Demo](https://dxpr.com/try)
 
 # AI Brand Voice Analysis: AI-Powered Brand Voice Consistency Scoring for Drupal
 
@@ -133,8 +137,10 @@ Automatically runs linting checks before commits:
 - Blocks commits with remaining issues
 - Provides colored output for feedback
 
-## Related DXPR Modules
+## Related Modules
 
-- [Analyze](https://www.drupal.org/project/analyze)
-- [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments)
-- [AI Content Strategy](https://www.drupal.org/project/ai_content_strategy)
+- [Analyze](https://www.drupal.org/project/analyze) - Content analysis framework with unified Analyze tab
+- [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments) - Multi-dimensional content tone analysis
+- [AI Content Strategy](https://www.drupal.org/project/ai_content_strategy) - AI-powered content strategy recommendations
+- [AI](https://www.drupal.org/project/ai) - Drupal AI integration layer for connecting to LLM providers
+- [Metatag](https://www.drupal.org/project/metatag) - Manage meta tags for improved SEO and social sharing
