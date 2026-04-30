@@ -2,9 +2,9 @@
 > using AI tone analysis. An [Analyze](https://www.drupal.org/project/analyze)
 > ecosystem plugin by [DXPR](https://dxpr.com).
 >
-> [Getting Started](https://dxpr.com/c/getting-started) |
+> [Getting Started](https://dxpr.com/c/marketing-cms) |
 > [Pricing](https://dxpr.com/pricing) |
-> [Try Free Demo](https://dxpr.com/try)
+> [Try Free Demo](https://try.dxpr.com)
 
 # AI Brand Voice Analysis: AI-Powered Brand Voice Consistency Scoring for Drupal
 
