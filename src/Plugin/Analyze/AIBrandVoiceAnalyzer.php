@@ -204,6 +204,13 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableA
   /**
    * {@inheritdoc}
    */
+  public function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
+    return $this->storage->getAnalyzedEntityIds($entity_type_id, $bundle);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getFullReportUrl(EntityInterface $entity): ?Url {
     return NULL;
   }
