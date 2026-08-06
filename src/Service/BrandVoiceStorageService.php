@@ -21,11 +21,11 @@ final class BrandVoiceStorageService {
   use DependencySerializationTrait;
 
   public function __construct(
-    private readonly Connection $database,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly RendererInterface $renderer,
-    private readonly ConfigFactoryInterface $configFactory,
-    private readonly TimeInterface $time,
+    protected readonly Connection $database,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly RendererInterface $renderer,
+    protected readonly ConfigFactoryInterface $configFactory,
+    protected readonly TimeInterface $time,
   ) {}
 
   /**
