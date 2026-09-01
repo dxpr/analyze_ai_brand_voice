@@ -4,4 +4,4 @@ analyze_ai_brand_voice.settings:
     _form: 'Drupal\analyze_ai_brand_voice\Form\BrandVoiceSettingsForm'
     _title: 'Brand Voice Analysis Settings'
   requirements:
-    _permission: 'administer analyze settings'
+    _permission: 'administer analyze'

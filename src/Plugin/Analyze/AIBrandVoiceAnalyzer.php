@@ -149,7 +149,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableA
   private function createStatusTable(string $message): array {
     // If this is the AI provider message and user has permission, append link.
     if ($message === 'No chat AI provider is configured for brand voice analysis.'
-      && $this->currentUser->hasPermission('administer analyze settings')) {
+      && $this->currentUser->hasPermission('administer analyze')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
       $message = $this->t(
         'No chat AI provider is configured for brand voice analysis. @link to set up AI services for brand voice analysis.',
