@@ -6,6 +6,9 @@ services:
   Drupal\analyze_ai_brand_voice\Hook\AnalyzeAiBrandVoiceHooks:
     class: Drupal\analyze_ai_brand_voice\Hook\AnalyzeAiBrandVoiceHooks
     autowire: true
+    arguments:
+      - '@analyze_ai_brand_voice.storage'
+      - '@current_user'
 
   Drupal\analyze_ai_brand_voice\Hook\AnalyzeAiBrandVoiceViewsHooks:
     class: Drupal\analyze_ai_brand_voice\Hook\AnalyzeAiBrandVoiceViewsHooks

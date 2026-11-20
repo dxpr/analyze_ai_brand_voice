@@ -2,6 +2,7 @@
 
 namespace Drupal\analyze_ai_brand_voice\Plugin\Analyze;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\ai\Exception\AiRateLimitException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
@@ -32,6 +33,11 @@ use Drupal\Core\Config\ConfigFactoryInterface;
  *   description = @Translation("Analyzes content for ai brand voice consistency.")
  * )
  */
+#[\Drupal\analyze\Attribute\Analyze(
+  id: "analyze_ai_brand_voice_analyzer",
+  label: new TranslatableMarkup("AI Brand Voice Analysis"),
+  description: new TranslatableMarkup("Analyzes content for ai brand voice consistency."),
+)]
 final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableAnalyzerInterface {
 
   use StringTranslationTrait;
@@ -274,7 +280,7 @@ final class AIBrandVoiceAnalyzer extends AnalyzePluginBase implements BatchableA
     $content = strip_tags($content);
     $content = str_replace('&nbsp;', ' ', $content);
     $content = preg_replace('/\s+/', ' ', $content);
-    $content = trim($content);
+    $content = trim($content, " \n\r\t\v\0");
 
     return $content;
   }
