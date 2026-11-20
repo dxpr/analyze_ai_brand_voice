@@ -155,7 +155,7 @@ final class BrandVoiceSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('analyze_ai_brand_voice.settings')
-      ->set('brand_voice', trim($form_state->getValue('brand_voice')))
+      ->set('brand_voice', trim($form_state->getValue('brand_voice'), " \n\r\t\v\0"))
       ->save();
 
     // Invalidate all cached brand voice analysis results since configuration
