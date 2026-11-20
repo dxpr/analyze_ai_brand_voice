@@ -2,3 +2,11 @@ services:
   analyze_ai_brand_voice.storage:
     class: Drupal\analyze_ai_brand_voice\Service\BrandVoiceStorageService
     arguments: ['@database', '@entity_type.manager', '@renderer', '@config.factory', '@datetime.time']
+
+  Drupal\analyze_ai_brand_voice\Hook\AnalyzeAiBrandVoiceHooks:
+    class: Drupal\analyze_ai_brand_voice\Hook\AnalyzeAiBrandVoiceHooks
+    autowire: true
+
+  Drupal\analyze_ai_brand_voice\Hook\AnalyzeAiBrandVoiceViewsHooks:
+    class: Drupal\analyze_ai_brand_voice\Hook\AnalyzeAiBrandVoiceViewsHooks
+    autowire: true
